@@ -43,6 +43,7 @@ max_check = check_cts.max()      # greatest number of checkins for all
 client_df["chktot"] = np.zeros(len(client_df), dtype=int)
 client_df.loc[check_cts.index, "chktot"] = check_cts.values
 client_df["misschk"] = client_df["msi_grace"] - client_df["chktot"]
+client_df.loc[client_df["misschk"] < 0, "misschk"] = 0
 
 # Update monthly check-in monitoring instrument in REDCap
 update_df = client_df[['dintake', 'msi', 'msi_grace', 'chktot', 'misschk']].reset_index()
