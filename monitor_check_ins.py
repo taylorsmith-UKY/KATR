@@ -1,61 +1,93 @@
 from redcap import Project
-from datetime import datetime as dt
-from datetime import timedelta as td
 import numpy as np
 import pandas as pd
-from dateutil.relativedelta import relativedelta as rdelt
+import inflect
+import plotly.graph_objects as go
+from utils import get_tsd
+p = inflect.engine()
 
+# Params
+gp_days = 7                         # Check-in grace period
+show_plot = False
+save_plot = False
+
+# Connect to REDCap project
 api_url = 'https://redcap.uky.edu/redcap/api/'
 with open("api_key.txt", "r") as f:
     api_key = f.readline().strip()
 project = Project(api_url, api_key)
-date_format = "%Y-%m-%d"
-gp_days = 7                         # Check-in grace period
 
-fields = ['idate', 'chkdate']
-events = ['intake_arm_1', 'monthy_checkin_arm_1']
-data = project.export_records(format_type="df", fields=fields, raw_or_label="raw", events=events)
-ids = data.index.get_level_values(0).unique()
+# Load intake data from REDCap
+client_df = project.export_records(format_type="df", fields=['idate'], raw_or_label="raw", events=['intake_arm_1']).\
+    drop(['redcap_repeat_instrument', 'redcap_repeat_instance'], axis=1)
+client_df.index = client_df.index.droplevel(1)
+client_df.columns = ['dintake']
+client_df = client_df.drop(client_df.index[client_df['dintake'].isna()])
+client_df['dintake'] = client_df['dintake'].astype('datetime64[ns]')
 
-event_name = 'reporting_arm_1'
-index = pd.MultiIndex.from_product([ids, [event_name]], names=['cid', 'redcap_event_name'])
-columns = ["dintake", "msi", "msi_grace", "chktot", "misschk"]
-values = [[""] * len(columns)] * len(ids)
-out = pd.DataFrame(data=values, index=index, columns=columns)
+# Get time since intake as of running this script
+dsi, msi, msi_grace = get_tsd(client_df['dintake'])
+client_df['dsi'] = dsi
+client_df['msi'] = msi
+client_df['msi_grace'] = msi_grace
 
-for cid in ids:
-    intake = data['idate'][cid]['intake_arm_1']
-    if type(intake) != str or intake == "":
-        ValueError(f"Problem with client id {cid} intake: {intake}")
-        out = out.drop(cid, level=0)
-        continue
-    intake = dt.strptime(intake, date_format)
-    today = dt.today()
-    msi = ((today.year - intake.year) * 12) + (today.month - intake.month)
-    if today.day < intake.day:      # only count if the same day if it has reached same day of the month
-        msi -= 1
-    check_deadline = intake + rdelt(months=msi, days=gp_days)
-    if today.day >= intake.day:
-        if today <= check_deadline:
-            msi_grace = msi - 1
-        else:
-            msi_grace = msi
-    else:
-        msi_grace = msi
-    try:    # If no monthly checkins, this will throw a KeyError
-        checks = data.loc[cid].loc["monthy_checkin_arm_1"]
-        if len(checks.shape) == 2:
-            chktot = len(data.loc[cid].loc["monthy_checkin_arm_1"])
-        else:
-            chktot = 1
-    except KeyError:
-        chktot = 0
-    misschk = max(msi_grace - chktot, 0)
+# Load checkin data from REDCap
+check_df = project.export_records(format_type="df", fields=['chkdate'],
+                                  raw_or_label="raw", events=['monthy_checkin_arm_1'])
+check_df.loc[:, 'chkdate'] = check_df['chkdate'].astype("datetime64[ns]")   # convert to datetime for calculations
+check_df = check_df.sort_values(by=['cid', 'chkdate'])
 
-    out.loc[(cid, 'reporting_arm_1'), 'dintake'] = dt.strftime(intake, date_format)
-    out.loc[(cid, 'reporting_arm_1'), 'msi'] = str(msi)
-    out.loc[(cid, 'reporting_arm_1'), 'msi_grace'] = str(msi_grace)
-    out.loc[(cid, 'reporting_arm_1'), 'chktot'] = str(chktot)
-    out.loc[(cid, 'reporting_arm_1'), 'misschk'] = str(msi_grace - chktot)
+# Get total number of checkins for each client
+check_cts = check_df.index.get_level_values(0).value_counts()
+max_check = check_cts.max()      # greatest number of checkins for all
+client_df["chktot"] = np.zeros(len(client_df), dtype=int)
+client_df.loc[check_cts.index, "chktot"] = check_cts.values
+client_df["misschk"] = client_df["msi_grace"] - client_df["chktot"]
 
-project.import_records(to_import=out.reset_index(), import_format="df")
+# Update monthly check-in monitoring instrument in REDCap
+update_df = client_df[['dintake', 'msi', 'msi_grace', 'chktot', 'misschk']].reset_index()
+update_df['redcap_event_name'] = ["reporting_arm_1"] * len(update_df)
+project.import_records(to_import=update_df, import_format="df")
+
+if show_plot or save_plot:
+    max_days = int(client_df['dsi'].max())
+    # New dataframe for storing values for each number of days since intake
+    dsi_df = pd.DataFrame(index=pd.Index(np.arange(max_days + 1, dtype=int), name='dsi'))
+    dsi_df['count'] = np.zeros(len(dsi_df), dtype=int)
+    for i in range(max_check):                                                      # clients
+        dsi_df[f"checkin_{i + 1}"] = np.zeros(max_days + 1, dtype=int)
+        dsi_df[f"checkin_{i + 1}_pct"] = np.zeros(max_days + 1, dtype=int)
+        client_df[f"checkin_{i + 1}_dsi"] = np.repeat(np.nan, len(client_df))
+
+    for cid in check_cts.index:                    # Determine date and days since intake
+        intake = client_df['dintake'][cid]                                        # for each monthly check-in for each client
+        for i, chkdate in enumerate(check_df.loc[cid, 'chkdate'].values):
+            dsi = (chkdate - intake).days
+            dsi_df.loc[dsi, f"checkin_{i + 1}"] += 1
+            client_df.loc[cid, f"checkin_{i + 1}_dsi"] = dsi
+
+    for dsi in range(max_days + 1):
+        sel = client_df['dsi'] >= dsi
+        dsi_df.loc[dsi, 'count'] = sel.sum()
+        for i in range(max_check):
+            dsi_df.loc[dsi, f"checkin_{i + 1}_ct"] = (client_df[f"checkin_{i + 1}_dsi"][sel] <= dsi).sum()
+            dsi_df.loc[dsi, f"checkin_{i + 1}_pct"] = (client_df[f"checkin_{i + 1}_dsi"][sel] <= dsi).sum() / sum(sel) * 100
+
+# Plot data
+    xticks = [30*i for i in range(1, (max_days // 30) + 1) if 30*i < max_days]
+    fig = go.Figure()
+    fig.add_trace(go.Scatter(x=dsi_df.index.values, y=dsi_df[f"checkin_{max_check}_pct"],
+                             name=f"{p.ordinal(max_check)} Checkin", fill="tozeroy", customdata=np.stack([dsi_df[f"checkin_{max_check}_ct"], dsi_df['count']]),
+                             hovertemplate='%{y:.1f}% %{customdata[0]}<br>Count: %{customdata[1]}'))
+    for i in range(max_check-1)[::-1]:
+        fig.add_trace(go.Scatter(x=dsi_df.index.values, y=dsi_df[f"checkin_{i + 1}_pct"],
+                                 name=f"{p.ordinal(i + 1)} Checkin", fill="tonexty", customdata=dsi_df[f"checkin_{i + 1}_ct"], hovertemplate='%{y:.1f}% %{customdata}'))
+    # fig.add_trace(go.Scatter(x=df2.index.values, y=df2["count"], name="Number of Clients", visible="legendonly"))
+    fig.update_layout(dict(title="Pct Checkins Over Time", xaxis_title="Days Since Intake", yaxis_title="Pct Completed",
+                           hovermode="x unified", xaxis_tickprefix="Days Since Intake: "))
+    fig.update_xaxes(tickmode='array', tickvals=xticks)
+    if show_plot:
+        fig.show()
+    if save_plot:
+        fig.write_html("checkins_over_time.html")
+        fig.write_image("checkins_over_time.png")
