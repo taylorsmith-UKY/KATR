@@ -10,37 +10,41 @@ project = Project(api_url, api_key)
 date_format = "%Y-%m-%d"
 out_event = 'reporting_arm_1'
 
-# Import data from REDCap
-fields = ['idate', 'name', 'phone', 'coord', 'addr', 'dob']
+# Import interview data from REDCap
+fields = ['idate', 'name', 'phone', 'coord', 'addr', 'dob', 'addr']
 events = ['intake_arm_1', "discharge_arm_1", "3month_postdischar_arm_1", "12month_postintake_arm_1"]
 data = project.export_records(format_type="df", fields=fields, raw_or_label="raw", events=events)\
     .drop(['redcap_repeat_instrument', 'redcap_repeat_instance'], axis=1)
 
 # Inventory management data
 fields_inv = ['cardmail', 'clicont', 'cloadint', 'cloaddis', 'cload3mo', 'cload12m']
-inv_data = project.export_records(format_type="df", fields=fields_inv, raw_or_label="raw", events="reporting_arm_1")\
+inv_data = project.export_records(format_type="df", fields=fields_inv, raw_or_label="raw", events=["reporting_arm_1"])\
     .drop(['redcap_repeat_instrument', 'redcap_repeat_instance'], axis=1)
 inv_data.index = inv_data.index.get_level_values(0)
 
 # New dataframe components for new report values
 ids = data.index.get_level_values(0).unique()
 nids = len(ids)
-columns = ['dname', 'rname', 'dphone', 'comp_status', 'first_idate', 'last_idate', 'last_int', 'next_idate', 'dcoord',
-           'days_since_last', 'days_to_next', 'addr2', 'dob_inv', 'bslncomp', 'needsend', 'needload']
+columns = ['dcoord', 'dname', 'comp_status', 'first_idate', 'disch_idate', 'mo3post', 'addr2'
+           'last_idate', 'next_idate', 'days_since_last', 'days_to_next', 'needsend', 'needload',
+           'dphone', 'addr2', 'dob_inv', 'bslncomp', 'last_int']
 index = pd.MultiIndex.from_product([ids, [out_event]], names=['cid', 'redcap_event_name'])
 values = [[""] * len(columns)] * nids
 new = pd.DataFrame(data=values, columns=columns, index=index)
 
 for uid in ids:
     # Exclude clients with no valid intake data
-    if data['idate'][uid][events[0]] == "":
+    if data['idate'][uid][events[0]] == "" or type(data['idate'][uid][events[0]]) != str:
         print(f"Client {uid} not being processed due to missing intake date.")
         new = new.drop(uid, level=0)
         continue
 
     intake = data['idate'][uid]['intake_arm_1']     # For use calculating next interview deadline
-    comp_stat = len(data.loc[uid])
-    last_event = events[len(data.loc[uid]) - 1]
+    comp_stat = 0
+    for event in data.loc[uid].index:
+        if type(data['idate'][uid][event]) == str and data['idate'][uid][event] != "":
+            comp_stat += 1
+    last_event = events[comp_stat - 1]
 
     last_idate = dt.strptime(data['idate'][uid][last_event], date_format)
     ndlast = (dt.today() - last_idate).days
@@ -50,31 +54,33 @@ for uid in ids:
     if comp_stat == 1:                              # Completed Intake
         dnext = last_idate + rdelt(months=6)
         ndnext = (dnext - dt.today()).days
-        if uid not in inv_data.index.values or inv_data.loc[uid, "cardmail"] != "":
+        if uid not in inv_data.index.values or inv_data.loc[uid, "cardmail"] == "" or \
+                type(inv_data.loc[uid, "cardmail"]) == float:
             needsend = 1
-        if needsend == 0 and inv_data.loc[uid, "clicont"] != "" and inv_data.loc[uid, "cloadint"] == "":
+            needload = 1
+        elif type(inv_data.loc[uid, "clicont"]) == float or inv_data.loc[uid, "clicont"] == "" or \
+                type(inv_data.loc[uid, "cloadint"]) == float or inv_data.loc[uid, "cloadint"] == "":
             needload = 1
 
     elif comp_stat == 2:                            # Completed Discharge
         dnext = last_idate + rdelt(months=3)
         ndnext = (dnext - dt.today()).days
-        if inv_data.loc[uid, "cloaddis"] == "":
+        if inv_data.loc[uid, "cloaddis"] == "" or type(inv_data.loc[uid, "cloaddis"]) == float:
             needload = 1
     elif comp_stat == 3:                            # Completed 3-month Post Discharge Follow-up
         dnext = intake + rdelt(months=12)
         ndnext = (dnext - dt.today()).days
-        if inv_data.loc[uid, "cload3mo"] == "":
+        if inv_data.loc[uid, "cload3mo"] == "" or type(inv_data.loc[uid, "cload3mo"]) == float:
             needload = 1
     else:                            # Completed 12-month Post Intake Follow-up
         dnext = ""
         ndnext = ""
-        if inv_data.loc[uid, "cload12m"] == "":
+        if inv_data.loc[uid, "cload12m"] == "" or type(inv_data.loc[uid, "cload12m"]) == float:
             needload = 1
 
     # Updates for Program Completion and Inventory Management Instruments in REDCap
     new.loc[(uid, out_event), 'comp_status'] = comp_stat
     new.loc[(uid, out_event), 'last_idate'] = dt.strftime(last_idate, date_format)
-    new.loc[(uid, out_event), 'last_int'] = dt.strftime(last_idate, date_format)
     new.loc[(uid, out_event), 'next_idate'] = dt.strftime(dnext, date_format)
     new.loc[(uid, out_event), 'days_since_last'] = ndlast
     new.loc[(uid, out_event), 'days_to_next'] = ndnext
@@ -86,10 +92,9 @@ for uid in ids:
     new.loc[(uid, out_event), 'dcoord'] = data['coord'][uid]['intake_arm_1']        # Program Completion
     new.loc[(uid, out_event), 'first_idate'] = data['idate'][uid]['intake_arm_1']   # Program Completion
 
-    new.loc[(uid, out_event), 'rname'] = data['name'][uid]['intake_arm_1']          # Inventory Management
     new.loc[(uid, out_event), 'dphone'] = data['phone'][uid][last_event]            # Inventory Management
     new.loc[(uid, out_event), 'addr2'] = data['addr'][uid][last_event]              # Inventory Management
     new.loc[(uid, out_event), 'dob_inv'] = data['dob'][uid]['intake_arm_1']         # Inventory Management
-    new.loc[(uid, out_event), 'bsln_comp'] = data['idate'][uid]['intake_arm_1']     # Inventory Management
+    new.loc[(uid, out_event), 'last_int'] = dt.strftime(last_idate, date_format)    # Inventory Management
 
-project.import_records(to_import=new.reset_index(), import_format="df")
+project.import_records(to_import=new.reset_index(), import_format="df", date_format=date_format)
