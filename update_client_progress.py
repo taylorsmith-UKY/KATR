@@ -25,7 +25,7 @@ inv_data.index = inv_data.index.get_level_values(0)
 # New dataframe components for new report values
 ids = data.index.get_level_values(0).unique()
 nids = len(ids)
-columns = ['dcoord', 'dname', 'comp_status', 'first_idate', 'disch_idate', 'mo3post', 'addr2'
+columns = ['dcoord', 'dname', 'comp_status', 'first_idate', 'disch_idate', 'mo3post', 'addr2',
            'last_idate', 'next_idate', 'days_since_last', 'days_to_next', 'needsend', 'needload',
            'dphone', 'addr2', 'dob_inv', 'bslncomp', 'last_int']
 index = pd.MultiIndex.from_product([ids, [out_event]], names=['cid', 'redcap_event_name'])
