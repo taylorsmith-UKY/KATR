@@ -44,11 +44,16 @@ max_check = check_cts.max()      # greatest number of checkins for all
 client_df["chktot"] = np.zeros(len(client_df), dtype=int)
 client_df.loc[check_cts.index.values, "chktot"] = check_cts.values
 client_df["misschk"] = client_df["msi_grace"] - client_df["chktot"]
-client_df.loc[:, "misschk"] = client_df["misschk"].replace(-1, 0)
+client_df.loc[:, "misschk"] = client_df["misschk"].replace(-1, 0).replace(-2, 0)
+client_df['lastcheck'] = [""] * len(client_df)
+client_df['lastcheck'] = client_df['lastcheck'].astype("datetime64[ns]")
+for cid in check_df.index.get_level_values(0).unique():
+    if cid in check_df.index.get_level_values(0):
+        client_df.loc[cid, 'lastcheck'] = check_df["chkdate"][cid].max()
 
 # Update monthly check-in monitoring instrument in REDCap
 if send_update:
-    update_df = client_df[['dintake', 'msi', 'msi_grace', 'chktot', 'misschk']].reset_index()
+    update_df = client_df[['dintake', 'msi', 'lastcheck', 'msi_grace', 'chktot', 'misschk']].reset_index()
     update_df['redcap_event_name'] = ["reporting_arm_1"] * len(update_df)
     project.import_records(to_import=update_df, import_format="df")
 
