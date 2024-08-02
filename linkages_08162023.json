@@ -1,0 +1,27 @@
+{
+  "region": {
+    "fieldname": "cty",
+    "groups": {
+      "Eastern Kentucky": {
+        "matches": [5, 8, 12, 13, 14, 16, 18, 19, 22],
+        "value": 1
+        },
+      "Louisville Area": {
+        "matches": [2, 9, 10, 15, 20, 21],
+        "value": 2
+      },
+      "Northern Kentucky": {
+        "matches": [1, 3, 4, 6, 7, 11, 17],
+        "value": 3
+      }
+    }
+  },
+  "race_rppr": 
+    {"American Indian/Alaska Native": [3, 4],
+    "Asian": [6, 7, 8, 9, 10, 11], 
+    "Native Hawaiian/Pacific Islander": [12, 13], 
+    "Black/African American": [1], 
+    "White": [2], 
+    "More than One Race": [], 
+    "Unknown or Not Reported": ["_1", "_2", "_3"]}
+}

@@ -11,10 +11,11 @@ with open("api_key.txt", "r") as f:
 project = Project(api_url, api_key)
 date_format = "%Y-%m-%d"
 out_event = 'reporting_arm_1'
-with open("linkages.json", 'r') as f:
+
+with open("linkages_08162023.json", 'r') as f:
     link = json.load(f)
 
-# Inventory management data
+# Import inventory management data from REDCap
 fields_inv = ['cardmail', 'clicont', 'cloadint', 'cloaddis', 'cload3mo', 'cload12m']
 inv_data = project.export_records(format_type="df", fields=fields_inv, raw_or_label="raw", events=["reporting_arm_1"])\
     .drop(['redcap_repeat_instrument', 'redcap_repeat_instance'], axis=1)
@@ -34,7 +35,7 @@ data = project.export_records(format_type="df", fields=fields, raw_or_label="raw
 # Import monthly check-in data (for months since last contact)
 chdata = project.export_records(format_type="df", fields=["chkdate"], events=["monthy_checkin_arm_1"])
 
-# Generate list of column names for multiple-selection fields
+# Generate list of column names for multiple-selection fields (TODO: create utility function to clean up code)
 plnserv_cols = [x for x in data.columns if "plnserv___" in x and "____" not in x]
 plnserv_2_cols = ["plnserv_2".join(x.split("plnserv")) for x in plnserv_cols]
 
@@ -56,6 +57,7 @@ sobliv_cols = ['sobliv_b_mo1', 'sobliv_b_mo2', 'sobliv_b_mo3', 'sobliv_b_mo4', '
 sobliv_cols_np = [x + "_np" for x in sobliv_cols]
 sobliv_cols_p = [x + "_p" for x in sobliv_cols]
 
+# Added for new reporting field indicating which SUD diagnoses are selected
 sud_cols = [f"sud_diag___{i+1}" for i in range(4)]
 
 # New dataframe components for new report values
@@ -118,7 +120,7 @@ for uid in ids:
     needsend = 0
     needload = 0
 
-    # Determine the latest interview and determine when the target for the next interview date
+    # Determine the latest interview and estimated date for the next interview
     comp_stat = 0
     # Completed Intake
     if events[1] not in client.index or (pd.isna(client['idate'][events[1]]) or client['idate'][events[1]] == ""):
@@ -173,6 +175,7 @@ for uid in ids:
         for tdate in chdata['chkdate'][uid]:
             lcont = max(lcont, dt.strptime(tdate, date_format))
 
+    # Months since last check-in
     mslc = (dt.today().year - lcont.year) * 12 + dt.today().month - lcont.month
 
     # Service region (serv_reg)
@@ -181,7 +184,7 @@ for uid in ids:
         if client[link['region']['fieldname']][last_event] in link['region']['groups'][reg]['matches']:
             serv_reg = link['region']['groups'][reg]['value']
 
-    # Sober living budget (select values based on whether pregnant/post-partum or has minors
+    # Sober living budget (select values based on whether pregnant/post-partum or has minors, for recruiting info)
     sobliv = []
     for i in range(1, 6):
         if data.loc[(uid, events[0]), 'preppmin'] == 1:
@@ -192,42 +195,46 @@ for uid in ids:
     # Updates for Program Completion and Inventory Management Instruments in REDCap
     new.loc[(uid, out_event), 'comp_status'] = comp_stat
     new.loc[(uid, out_event), 'last_idate'] = dt.strftime(last_idate, date_format)
-    new.loc[(uid, out_event), 'next_idate'] = dt.strftime(dnext, date_format)
+    new.loc[(uid, out_event), 'serv_reg'] = serv_reg                                # Program Completion
+    new.loc[(uid, out_event), 'mo_last_cont'] = mslc                                # Program Completion
+    new.loc[(uid, out_event), 'sobliv_b_mo1'] = sobliv[0]                           # Recruitment Info
+    new.loc[(uid, out_event), 'sobliv_b_mo2'] = sobliv[1]                           # Recruitment Info
+    new.loc[(uid, out_event), 'sobliv_b_mo3'] = sobliv[2]                           # Recruitment Info
+    new.loc[(uid, out_event), 'sobliv_b_mo4'] = sobliv[3]                           # Recruitment Info
+    new.loc[(uid, out_event), 'sobliv_b_mo5'] = sobliv[4]                           # Recruitment Info
+    try:
+        new.loc[(uid, out_event), 'next_idate'] = dt.strftime(dnext, date_format)
+        new.loc[(uid, out_event), 'days_to_next'] = ndnext
+    except TypeError:
+        new.loc[(uid, out_event), 'next_idate'] = ""
+        new.loc[(uid, out_event), 'days_to_next'] = ""
     new.loc[(uid, out_event), 'days_since_last'] = ndlast
-    new.loc[(uid, out_event), 'days_to_next'] = ndnext
+
     new.loc[(uid, out_event), 'needsend'] = needsend
     new.loc[(uid, out_event), 'needload'] = needload
 
     # Copy values to corresponding instruments for convenience when viewing in REDCap
-    new.loc[(uid, out_event), 'dname'] = client['name']['intake_arm_1']          # Program Completion
-    new.loc[(uid, out_event), 'dcoord'] = client['coord']['intake_arm_1']        # Program Completion
+    new.loc[(uid, out_event), 'dname'] = client['name']['intake_arm_1']             # Program Completion
+    new.loc[(uid, out_event), 'dcoord'] = client['coord']['intake_arm_1']           # Program Completion
     new.loc[(uid, out_event), 'first_idate'] = intake                               # Program Completion
-    new.loc[(uid, out_event), 'serv_reg'] = serv_reg                                # Program Completion
-    new.loc[(uid, out_event), 'mo_last_cont'] = mslc                             # Program Completion
 
-    new.loc[(uid, out_event), 'rname'] = client['name']['intake_arm_1']           # Inventory Management
-    new.loc[(uid, out_event), 'dphone'] = client['phone'][last_event]             # Inventory Management
-    new.loc[(uid, out_event), 'addr2'] = client['addr'][last_event]               # Inventory Management
+    new.loc[(uid, out_event), 'rname'] = client['name']['intake_arm_1']             # Inventory Management
+    new.loc[(uid, out_event), 'dphone'] = client['phone'][last_event]               # Inventory Management
+    new.loc[(uid, out_event), 'addr2'] = client['addr'][last_event]                 # Inventory Management
 
-    new.loc[(uid, out_event), 'demail'] = client['email'][last_event]             # Recruitment Info
-    new.loc[(uid, out_event), 'age_2'] = client['age'][events[0]]                 # Recruitment Info
-    new.loc[(uid, out_event), 'bneeds_b_2'] = client['bneeds_b'][events[0]]  # Recruitment Info
+    # Copy
+    new.loc[(uid, out_event), 'demail'] = client['email'][last_event]               # Recruitment Info
+    new.loc[(uid, out_event), 'age_2'] = client['age'][events[0]]                   # Recruitment Info
+    new.loc[(uid, out_event), 'bneeds_b_2'] = client['bneeds_b'][events[0]]         # Recruitment Info
     new.loc[(uid, out_event), 'bneeds_v_2'] = client['bneeds_v'][events[0]]
-    new.loc[(uid, out_event), 'sobliv_b_2'] = client['sobliv_b'][events[0]]      # Recruitment Info
-    new.loc[(uid, out_event), 'sl_v_2'] = client['sl_v'][events[0]]        # Recruitment Info
-    new.loc[(uid, out_event), 'sobliv_b_mo1'] = sobliv[0]                            # Recruitment Info
-    new.loc[(uid, out_event), 'sobliv_b_mo2'] = sobliv[1]                            # Recruitment Info
-    new.loc[(uid, out_event), 'sobliv_b_mo3'] = sobliv[2]                            # Recruitment Info
-    new.loc[(uid, out_event), 'sobliv_b_mo4'] = sobliv[3]                            # Recruitment Info
-    new.loc[(uid, out_event), 'sobliv_b_mo5'] = sobliv[4]                            # Recruitment Info
-    new.loc[(uid, out_event), 'trans_b_2'] = client['trans_b'][events[0]]    # Recruitment Info
-    new.loc[(uid, out_event), 'trans_v_2'] = client['trans_v'][events[0]]    # Recruitment Info
-    new.loc[(uid, out_event), 'trans_t_2'] = client['trans_t'][events[0]]    # Recruitment Info
-    new.loc[(uid, out_event), 'employ_b_2'] = client['employ_b'][events[0]]  # Recruitment Info
-    new.loc[(uid, out_event), 'employ_v_2'] = client['employ_v'][events[0]]  # Recruitment Info
-    new.loc[(uid, out_event), 'employ_t_2'] = client['employ_t'][events[0]]  # Recruitment Info
-    new.loc[(uid, out_event), 'gender_2'] = client['gender'][events[0]]          # Recruitment Info
-    new.loc[(uid, out_event), 'dob_inv'] = client['dob']['intake_arm_1']         # Inventory Management
-    new.loc[(uid, out_event), 'last_int'] = dt.strftime(last_idate, date_format)    # Inventory Management
+    new.loc[(uid, out_event), 'sobliv_b_2'] = client['sobliv_b'][events[0]]         # Recruitment Info
+    new.loc[(uid, out_event), 'sl_v_2'] = client['sl_v'][events[0]]                 # Recruitment Info
+    new.loc[(uid, out_event), 'trans_b_2'] = client['trans_b'][events[0]]           # Recruitment Info
+    new.loc[(uid, out_event), 'trans_v_2'] = client['trans_v'][events[0]]           # Recruitment Info
+    new.loc[(uid, out_event), 'trans_t_2'] = client['trans_t'][events[0]]           # Recruitment Info
+    new.loc[(uid, out_event), 'employ_b_2'] = client['employ_b'][events[0]]         # Recruitment Info
+    new.loc[(uid, out_event), 'employ_v_2'] = client['employ_v'][events[0]]         # Recruitment Info
+    new.loc[(uid, out_event), 'employ_t_2'] = client['employ_t'][events[0]]         # Recruitment Info
+    new.loc[(uid, out_event), 'gender_2'] = client['gender'][events[0]]             # Recruitment Info
 
 project.import_records(to_import=new.reset_index(), import_format="df", date_format="YMD")

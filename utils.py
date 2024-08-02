@@ -24,4 +24,42 @@ def get_tsd(dates: pd.Series, grace_period: int = 7):
     return dsd, msd, msd_grace
 
 
+def condense_cols(data: pd.DataFrame, legend: dict, fieldname: str = "",
+                  output: str = "labels" in ["labels", "values"], sep: str = ","):
+    """
+    Condense multiple columns representing response values for individual values corresponding to the same field
+    :param data: DataFrame containing the columns for each response option for a single field
+    :param legend: Dict containing the response values and their corresponding label
+    :param fieldname: Name of the original field before splitting
+    :param output: String in ["labels", "values"]
+    :param sep: Separator character/string for output
+    """
+    if fieldname == "":
+        fieldname = data.columns[0].split("___")[0]
+    out = pd.Series(index=data.index, dtype=str, name=fieldname)
+    colnames = {val: f"{fieldname}___{val}".replace("-", "_") for val in legend.keys()}
+    for idx in out.index:
+        vals = []
+        for val in legend.keys():
+            if data[colnames[val]][idx] == 1:
+                vals.append(val)
+        if output == "values":
+            out[idx] = f"{sep}".join(vals)
+        else:
+            out[idx] = f"{sep}".join([legend[val] for val in vals])
+    return out
 
+
+def get_codes(dictfname, fieldnames):
+    ddict = pd.read_csv(dictfname)
+    out = {}
+    for fieldname in fieldnames:
+        out[fieldname] = {}
+        for choice in ddict[ddict["Variable / Field Name"] == fieldname]\
+                ['Choices, Calculations, OR Slider Labels'].values[0].split(" | "):
+            val, label = choice.split(", ")
+            try:
+                out[fieldname][int(val)] = label
+            except ValueError:
+                out[fieldname][val] = label
+    return out
