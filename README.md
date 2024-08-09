@@ -1,5 +1,7 @@
 The bulk of the contents within this project are standalone scripts whose individual purposes are documented below. All of these scripts rely on reading data from REDCap and then possibly uploading new information into REDCap. In order to do this, you will need an API token from your project admin with the appropriate permissions to access/edit the data you are querying. Save this key as plain text in the file "api_key.txt" and place it in the same directory as the scripts. All standalone scripts can be executed once this file has been placed and all requirements are satisfied.
 
+Note: <a href="https://www.python.org/downloads/">Python 3</a> must first be installed. 
+
 To set up virtual environment using venv and install requirements, execute the following:
 <code>
 python -m myenv
