@@ -4,6 +4,7 @@ from datetime import datetime as dt
 from dateutil.relativedelta import relativedelta as rdelt
 import numpy as np
 import json
+from utils import build_checkbox_cols as bcc
 
 api_url = 'https://redcap.uky.edu/redcap/api/'
 with open("api_key.txt", "r") as f:
@@ -35,23 +36,34 @@ data = project.export_records(format_type="df", fields=fields, raw_or_label="raw
 # Import monthly check-in data (for months since last contact)
 chdata = project.export_records(format_type="df", fields=["chkdate"], events=["monthy_checkin_arm_1"])
 
-# Generate list of column names for multiple-selection fields (TODO: create utility function to clean up code)
-plnserv_cols = [x for x in data.columns if "plnserv___" in x and "____" not in x]
-plnserv_2_cols = ["plnserv_2".join(x.split("plnserv")) for x in plnserv_cols]
+# Generate list of column names for multiple-selection fields
+bel_pop_cols = bcc("bel_pop", data.columns)
+bel_pop_2_cols = [x.replace("bel_pop", "bel_pop_2") for x in bel_pop_cols]
 
-bel_pop_cols = [x for x in data.columns if "bel_pop___" in x and "____" not in x]
-bel_pop_2_cols = ["bel_pop_2".join(x.split("bel_pop")) for x in bel_pop_cols]
+race_cols = bcc("race", data.columns)
+race_2_cols = [x.replace("race", "race_2") for x in bel_pop_cols]
 
-race_cols = [x for x in data.columns if "race___" in x and "____" not in x]
-race_2_cols = ["race_2".join(x.split("race")) for x in race_cols]
+eth_cols = bcc("eth", data.columns)
+eth_2_cols = [x.replace("eth", "eth_2") for x in bel_pop_cols]
+# bel_pop_cols = [x for x in data.columns if "bel_pop___" in x and "____" not in x]
+# bel_pop_2_cols = ["bel_pop_2".join(x.split("bel_pop")) for x in bel_pop_cols]
+#
+# race_cols = [x for x in data.columns if "race___" in x and "____" not in x]
+# race_2_cols = ["race_2".join(x.split("race")) for x in race_cols]
+#
+# eth_cols = [x for x in data.columns if "eth___" in x and "____" not in x]
+# eth_2_cols = ["eth_2".join(x.split("eth")) for x in eth_cols]
 
-eth_cols = [x for x in data.columns if "eth___" in x and "____" not in x]
-eth_2_cols = ["eth_2".join(x.split("eth")) for x in eth_cols]
 
-diag_cols = {'alcohol': [x for x in data.columns if "almeds___" in x and "____" not in x][-1],
-             'opioids': [x for x in data.columns if "opmeds___" in x and "____" not in x][-1],
-             'stimulants': [x for x in data.columns if "stints___" in x and "____" not in x][-1],
-             'tobacco': [x for x in data.columns if "tomeds___" in x and "____" not in x][-1]}
+diag_cols = {'alcohol': bcc("almeds", data.columns)[-1],
+             'opioids': bcc("opmeds", data.columns)[-1],
+             'stimulants': bcc("stints", data.columns)[-1],
+             'tobacco': bcc("tomeds", data.columns)[-1]}
+
+# diag_cols = {'alcohol': [x for x in data.columns if "almeds___" in x and "____" not in x][-1],
+#              'opioids': [x for x in data.columns if "opmeds___" in x and "____" not in x][-1],
+#              'stimulants': [x for x in data.columns if "stints___" in x and "____" not in x][-1],
+#              'tobacco': [x for x in data.columns if "tomeds___" in x and "____" not in x][-1]}
 
 sobliv_cols = ['sobliv_b_mo1', 'sobliv_b_mo2', 'sobliv_b_mo3', 'sobliv_b_mo4', 'sobliv_b_mo5']
 sobliv_cols_np = [x + "_np" for x in sobliv_cols]
@@ -119,48 +131,10 @@ for uid in ids:
     # For keeping track of incentive dispersals
     needsend = 0
     needload = 0
-
-    # Determine the latest interview and estimated date for the next interview
     comp_stat = 0
-    # Completed Intake
-    if events[1] not in client.index or (pd.isna(client['idate'][events[1]]) or client['idate'][events[1]] == ""):
-        comp_stat = 1
-        last_event = events[0]
-        last_idate = dt.strptime(client['idate'][last_event], date_format)
-        dnext = last_idate + rdelt(months=6)
-        ndnext = (dnext - dt.today()).days
-        if uid not in inv_data.index.values or inv_data.loc[uid, "cardmail"] == "" or \
-                type(inv_data.loc[uid, "cardmail"]) == float:
-            needsend = 1
-            needload = 1
-        elif type(inv_data.loc[uid, "clicont"]) == float or inv_data.loc[uid, "clicont"] == "" or \
-                type(inv_data.loc[uid, "cloadint"]) == float or inv_data.loc[uid, "cloadint"] == "":
-            needload = 1
-
-    # Completed Discharge
-    elif events[2] not in client.index or (pd.isna(client['idate'][events[2]]) or client['idate'][events[2]] == ""):
-        comp_stat = 2
-        last_event = events[1]
-        last_idate = dt.strptime(client['idate'][last_event], date_format)
-        dnext = intake_dt + rdelt(months=6)
-        ndnext = (dnext - dt.today()).days
-        if inv_data.loc[uid, "cloaddis"] == "" or type(inv_data.loc[uid, "cloaddis"]) == float:
-            needload = 1
-        if client['disch_st'][events[1]] == 2:
-            comp_stat = 10
-        elif client['disch_st'][events[1]] == 3:
-            comp_stat = 11
-    # Completed 3-month Post Discharge Follow-up
-    elif events[3] not in client.index or (pd.isna(client['idate'][events[3]]) or client['idate'][events[3]] == ""):
-        comp_stat = 3
-        last_event = events[2]
-        last_idate = dt.strptime(client['idate'][last_event], date_format)
-        dnext = intake_dt + rdelt(months=12)
-        ndnext = (dnext - dt.today()).days
-        if inv_data.loc[uid, "cload3mo"] == "" or type(inv_data.loc[uid, "cload3mo"]) == float:
-            needload = 1
-    # Completed 12-month Post Intake Follow-up
-    else:
+    if events[3] in client.index and not \
+            (pd.isna(client['idate'][events[3]]) or client['idate'][events[3]] == "" or
+             (pd.isna(client['name'][events[3]]) or client['name'][events[3]] == "")):  # Completed 12-mo follow-up
         comp_stat = 4
         last_event = events[3]
         last_idate = dt.strptime(client['idate'][last_event], date_format)
@@ -168,6 +142,55 @@ for uid in ids:
         ndnext = ""
         if inv_data.loc[uid, "cload12m"] == "" or type(inv_data.loc[uid, "cload12m"]) == float:
             needload = 1
+
+    elif events[2] in client.index and not \
+            (pd.isna(client['idate'][events[2]]) or client['idate'][events[2]] == "" or
+             (pd.isna(client['name'][events[2]]) or client['name'][events[2]] == "")):  # Completed 3-mo follow-up
+        if comp_stat <= 3:
+            comp_stat = 3
+            last_event = events[2]
+            last_idate = dt.strptime(client['idate'][last_event], date_format)
+            dnext = intake_dt + rdelt(months=12)
+            ndnext = (dnext - dt.today()).days
+            if inv_data.loc[uid, "cload3mo"] == "" or type(inv_data.loc[uid, "cload3mo"]) == float:
+                needload = 1
+
+    elif events[1] in client.index and not \
+            (pd.isna(client['idate'][events[1]]) or client['idate'][events[1]] == "" or
+             (pd.isna(client['name'][events[1]]) or client['name'][events[1]] == "")):  # Completed Discharge
+        if comp_stat <= 2:
+            comp_stat = 2
+            last_event = events[1]
+            last_idate = dt.strptime(client['idate'][last_event], date_format)
+            dnext = intake_dt + rdelt(months=6)
+            ndnext = (dnext - dt.today()).days
+            if inv_data.loc[uid, "cloaddis"] == "" or type(inv_data.loc[uid, "cloaddis"]) == float:
+                needload = 1
+            if client['disch_st'][events[1]] == 2:
+                comp_stat = 10
+            elif client['disch_st'][events[1]] == 3:
+                comp_stat = 11
+
+    elif events[0] in client.index and not \
+            (pd.isna(client['idate'][events[0]]) or client['idate'][events[0]] == "" or
+             (pd.isna(client['name'][events[0]]) or client['name'][events[0]] == "")):  # Completed intake
+        if comp_stat <= 1:
+            comp_stat = 1
+            last_event = events[0]
+            last_idate = dt.strptime(client['idate'][last_event], date_format)
+            dnext = last_idate + rdelt(months=6)
+            ndnext = (dnext - dt.today()).days
+            if uid not in inv_data.index.values or inv_data.loc[uid, "cardmail"] == "" or \
+                    type(inv_data.loc[uid, "cardmail"]) == float:
+                needsend = 1
+                needload = 1
+            elif type(inv_data.loc[uid, "clicont"]) == float or inv_data.loc[uid, "clicont"] == "" or \
+                    type(inv_data.loc[uid, "cloadint"]) == float or inv_data.loc[uid, "cloadint"] == "":
+                needload = 1
+    else:
+        print(f"Issue with Client {uid}")
+        quit()
+
     ndlast = (dt.today() - last_idate).days
 
     lcont = last_idate
@@ -185,6 +208,7 @@ for uid in ids:
             serv_reg = link['region']['groups'][reg]['value']
 
     # Sober living budget (select values based on whether pregnant/post-partum or has minors, for recruiting info)
+    # Consolidate values so that the same field can express the correct quantity whether pregnant or not
     sobliv = []
     for i in range(1, 6):
         if data.loc[(uid, events[0]), 'preppmin'] == 1:
@@ -237,4 +261,5 @@ for uid in ids:
     new.loc[(uid, out_event), 'employ_t_2'] = client['employ_t'][events[0]]         # Recruitment Info
     new.loc[(uid, out_event), 'gender_2'] = client['gender'][events[0]]             # Recruitment Info
 
+# new.to_csv("updated.csv")
 project.import_records(to_import=new.reset_index(), import_format="df", date_format="YMD")

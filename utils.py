@@ -63,3 +63,9 @@ def get_codes(dictfname, fieldnames):
             except ValueError:
                 out[fieldname][val] = label
     return out
+
+
+def build_checkbox_cols(base_name, all_cols):
+    cols = [x for x in all_cols if f"{base_name}___" in x and "____" not in x]
+    vals = [x[len(base_name) + 3:] for x in cols]
+    return cols
