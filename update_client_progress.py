@@ -27,7 +27,8 @@ fields = ['idate', 'name', 'phone', 'coord', 'addr', 'dob', 'addr', 'disch_st', 
           'race', 'eth', 'almeds', 'opmeds', 'stints', 'tomeds', 'plnserv', 'bel_pop', 'preppmin', 'bneeds_b',
           'bneeds_v', 'sl_v', 'sobliv_b', 'sobliv_b_mo1_np', 'sobliv_b_mo2_np', 'sobliv_b_mo3_np', 'sobliv_b_mo4_np',
           'sobliv_b_mo5_np', 'sobliv_b_mo1_p', 'sobliv_b_mo2_p', 'sobliv_b_mo3_p', 'sobliv_b_mo4_p', 'sobliv_b_mo5_p',
-          'trans_b', 'trans_v', 'trans_t', 'employ_b', 'employ_v', 'employ_t']
+          'trans_b', 'trans_v', 'trans_t', 'employ_b', 'employ_v', 'employ_t', 'gpra_complete',
+          'sobliv_sp', 'trans_sp', 'employ_b_3', 'bneeds_sp']
 
 events = ['intake_arm_1', "discharge_arm_1", "3month_postdischar_arm_1", "12month_postintake_arm_1"]
 data = project.export_records(format_type="df", fields=fields, raw_or_label="raw", events=events)\
@@ -45,25 +46,11 @@ race_2_cols = [x.replace("race", "race_2") for x in bel_pop_cols]
 
 eth_cols = bcc("eth", data.columns)
 eth_2_cols = [x.replace("eth", "eth_2") for x in bel_pop_cols]
-# bel_pop_cols = [x for x in data.columns if "bel_pop___" in x and "____" not in x]
-# bel_pop_2_cols = ["bel_pop_2".join(x.split("bel_pop")) for x in bel_pop_cols]
-#
-# race_cols = [x for x in data.columns if "race___" in x and "____" not in x]
-# race_2_cols = ["race_2".join(x.split("race")) for x in race_cols]
-#
-# eth_cols = [x for x in data.columns if "eth___" in x and "____" not in x]
-# eth_2_cols = ["eth_2".join(x.split("eth")) for x in eth_cols]
-
 
 diag_cols = {'alcohol': bcc("almeds", data.columns)[-1],
              'opioids': bcc("opmeds", data.columns)[-1],
              'stimulants': bcc("stints", data.columns)[-1],
              'tobacco': bcc("tomeds", data.columns)[-1]}
-
-# diag_cols = {'alcohol': [x for x in data.columns if "almeds___" in x and "____" not in x][-1],
-#              'opioids': [x for x in data.columns if "opmeds___" in x and "____" not in x][-1],
-#              'stimulants': [x for x in data.columns if "stints___" in x and "____" not in x][-1],
-#              'tobacco': [x for x in data.columns if "tomeds___" in x and "____" not in x][-1]}
 
 sobliv_cols = ['sobliv_b_mo1', 'sobliv_b_mo2', 'sobliv_b_mo3', 'sobliv_b_mo4', 'sobliv_b_mo5']
 sobliv_cols_np = [x + "_np" for x in sobliv_cols]
@@ -80,7 +67,8 @@ columns = ['dcoord', 'dname', 'comp_status', 'first_idate', 'disch_idate', 'mo3p
            'dphone', 'dob_inv', 'bslncomp', 'last_int', 'serv_reg', 'gender_2'] + \
            bel_pop_2_cols + race_2_cols + eth_2_cols + sud_cols + sobliv_cols + \
           ['bneeds_b_2', 'bneeds_v_2', 'sobliv_b_2', 'sl_v_2', 'trans_b_2', 'trans_v_2', 'trans_t_2',
-           'employ_b_2', 'employ_v_2', 'employ_t_2', 'age_2', 'mo_last_cont']
+           'employ_b_2', 'employ_v_2', 'employ_t_2', 'age_2', 'mo_last_cont',
+           'comp_int', 'comp_dis', 'comp_3mo', 'comp_12mo']
 
 index = pd.MultiIndex.from_product([ids, [out_event]], names=['cid', 'redcap_event_name'])
 new = pd.DataFrame(columns=columns, index=index)
@@ -102,6 +90,8 @@ data["trans_b"] = data["trans_b"].fillna(0).astype("int64")
 data["employ_b"] = data["employ_b"].fillna(0).astype("int64")
 data["gender"] = data["gender"].fillna(-1).astype("int64")
 data["age"] = data["age"].fillna(-1).astype("int64")
+
+
 
 for uid in ids:
     # Exclude clients with no valid intake data
@@ -128,58 +118,77 @@ for uid in ids:
     new.loc[(uid, out_event), race_2_cols] = client.loc[events[0], race_cols]
     new.loc[(uid, out_event), eth_2_cols] = client.loc[events[0], eth_cols]
 
-    # For keeping track of incentive dispersals
+    # Determine intake interview completion and associated values for reporting purposes
+    comp_stat = 0
     needsend = 0
     needload = 0
-    comp_stat = 0
-    if events[3] in client.index and not \
-            (pd.isna(client['idate'][events[3]]) or client['idate'][events[3]] == "" or
-             (pd.isna(client['name'][events[3]]) or client['name'][events[3]] == "")):  # Completed 12-mo follow-up
-        comp_stat = 4
+    idate_int = ""
+    idate_dis = ""
+    idate_3mo = ""
+    idate_12mo = ""
+
+    # 12-MO FOLLOW-UP
+    if events[3] in client.index and client['gpra_complete'][events[3]] == 2:
+        comp_12mo = 1
         last_event = events[3]
-        last_idate = dt.strptime(client['idate'][last_event], date_format)
+        idate_12mo = dt.strptime(client['idate'][last_event], date_format)
+        last_idate = idate_12mo
         dnext = ""
         ndnext = ""
+        comp_stat = 4
         if inv_data.loc[uid, "cload12m"] == "" or type(inv_data.loc[uid, "cload12m"]) == float:
             needload = 1
+    else:
+        comp_12mo = 0
+        idate_12mo = ""
 
-    elif events[2] in client.index and not \
-            (pd.isna(client['idate'][events[2]]) or client['idate'][events[2]] == "" or
-             (pd.isna(client['name'][events[2]]) or client['name'][events[2]] == "")):  # Completed 3-mo follow-up
-        if comp_stat <= 3:
-            comp_stat = 3
+    # 3MO FOLLOW-UP
+    if events[2] in client.index and client['gpra_complete'][events[2]] == 2:
+        comp_3mo = 1
+        idate_3mo = dt.strptime(client['idate'][events[2]], date_format)
+        if inv_data.loc[uid, "cload3mo"] == "" or type(inv_data.loc[uid, "cload3mo"]) == float:
+            needload = 1
+        if comp_stat > 0:
             last_event = events[2]
-            last_idate = dt.strptime(client['idate'][last_event], date_format)
+            last_idate = idate_3mo
             dnext = intake_dt + rdelt(months=12)
             ndnext = (dnext - dt.today()).days
-            if inv_data.loc[uid, "cload3mo"] == "" or type(inv_data.loc[uid, "cload3mo"]) == float:
-                needload = 1
+            comp_stat = 3
+    else:
+        comp_3mo = 0
+        idate_3mo = ""
 
-    elif events[1] in client.index and not \
-            (pd.isna(client['idate'][events[1]]) or client['idate'][events[1]] == "" or
-             (pd.isna(client['name'][events[1]]) or client['name'][events[1]] == "")):  # Completed Discharge
-        if comp_stat <= 2:
+    # DISCHARGE
+    if events[1] in client.index and client['gpra_complete'][events[1]] == 2:
+        comp_dis = 1
+        if inv_data.loc[uid, "cloaddis"] == "" or type(inv_data.loc[uid, "cloaddis"]) == float:
+            needload = 1
+        # if client['disch_st'][events[1]] == 2:
+        #     comp_stat = 10
+        # elif client['disch_st'][events[1]] == 3:
+        #     comp_stat = 11
+        if comp_stat > 0:
             comp_stat = 2
+            idate_dis = dt.strptime(client['idate'][events[1]], date_format)
             last_event = events[1]
-            last_idate = dt.strptime(client['idate'][last_event], date_format)
+            last_idate = idate_dis
             dnext = intake_dt + rdelt(months=6)
             ndnext = (dnext - dt.today()).days
-            if inv_data.loc[uid, "cloaddis"] == "" or type(inv_data.loc[uid, "cloaddis"]) == float:
-                needload = 1
-            if client['disch_st'][events[1]] == 2:
-                comp_stat = 10
-            elif client['disch_st'][events[1]] == 3:
-                comp_stat = 11
 
-    elif events[0] in client.index and not \
-            (pd.isna(client['idate'][events[0]]) or client['idate'][events[0]] == "" or
-             (pd.isna(client['name'][events[0]]) or client['name'][events[0]] == "")):  # Completed intake
-        if comp_stat <= 1:
-            comp_stat = 1
+    else:
+        comp_dis = 0
+        idate_dis = ""
+
+    # INTAKE
+    if events[0] in client.index and client['gpra_complete'][events[0]] == 2:
+        comp_int = 1
+        idate_int = dt.strptime(client['idate'][events[0]], date_format)
+        if comp_stat == 0:
             last_event = events[0]
-            last_idate = dt.strptime(client['idate'][last_event], date_format)
+            last_idate = idate_int
             dnext = last_idate + rdelt(months=6)
-            ndnext = (dnext - dt.today()).days
+            ndnext = (dnext - dt.today())
+            comp_stat = 1
             if uid not in inv_data.index.values or inv_data.loc[uid, "cardmail"] == "" or \
                     type(inv_data.loc[uid, "cardmail"]) == float:
                 needsend = 1
@@ -188,11 +197,23 @@ for uid in ids:
                     type(inv_data.loc[uid, "cloadint"]) == float or inv_data.loc[uid, "cloadint"] == "":
                 needload = 1
     else:
-        print(f"Issue with Client {uid}")
-        quit()
+        comp_int = 0
+        idate_int = ""
 
+    # Termination status
+    terminated = 0
+    if events[1] in client.index:
+        if client['disch_st'][events[1]] == 10:     # Coordinator marked discharge status as "Terminated"
+            if comp_stat < 2:                       # If later interviews are completed, ignore disch_st
+                terminated = 1
+
+    # If never received any funds, terminate them from study
+    spent_cols = ['bneeds_sp', 'sobliv_sp', 'trans_sp', 'employ_b_3', 'bneeds_sp']
+    if comp_dis and client.loc[events[1]][spent_cols].sum() == 0:
+        terminated = 1
+
+    # Determine the number of days since last contact, including monthly check-ins
     ndlast = (dt.today() - last_idate).days
-
     lcont = last_idate
     if uid in chdata.index.get_level_values(0):
         for tdate in chdata['chkdate'][uid]:
@@ -212,15 +233,35 @@ for uid in ids:
     sobliv = []
     for i in range(1, 6):
         if data.loc[(uid, events[0]), 'preppmin'] == 1:
-            sobliv.append(int(client.loc[events[0], f'sobliv_b_mo{i}_p']))
+            try:
+                sobliv.append(int(client.loc[events[0], f'sobliv_b_mo{i}_p']))
+            except ValueError:
+                sobliv.append(0)
         else:
-            sobliv.append(int(client.loc[events[0], f'sobliv_b_mo{i}_np']))
+            try:
+                sobliv.append(int(client.loc[events[0], f'sobliv_b_mo{i}_np']))
+            except ValueError:
+                sobliv.append(0)
 
     # Updates for Program Completion and Inventory Management Instruments in REDCap
     new.loc[(uid, out_event), 'comp_status'] = comp_stat
     new.loc[(uid, out_event), 'last_idate'] = dt.strftime(last_idate, date_format)
     new.loc[(uid, out_event), 'serv_reg'] = serv_reg                                # Program Completion
     new.loc[(uid, out_event), 'mo_last_cont'] = mslc                                # Program Completion
+
+    new.loc[(uid, out_event), 'idate_int'] = idate_int  # Program Completion
+    new.loc[(uid, out_event), 'idate_dis'] = idate_dis  # Program Completion
+    new.loc[(uid, out_event), 'idate_3mo'] = idate_3mo  # Program Completion
+    new.loc[(uid, out_event), 'idate_12mo'] = idate_12mo  # Program Completion
+
+    # Interviews completed
+    new.loc[(uid, out_event), 'comp_int'] = idate_int  # Program Completion
+    new.loc[(uid, out_event), 'comp_dis'] = idate_dis  # Program Completion
+    new.loc[(uid, out_event), 'comp_3mo'] = idate_3mo  # Program Completion
+    new.loc[(uid, out_event), 'comp_12mo'] = idate_12mo  # Program Completion
+    new.loc[(uid, out_event), 'terminated'] = terminated  # Program Completion
+
+
     new.loc[(uid, out_event), 'sobliv_b_mo1'] = sobliv[0]                           # Recruitment Info
     new.loc[(uid, out_event), 'sobliv_b_mo2'] = sobliv[1]                           # Recruitment Info
     new.loc[(uid, out_event), 'sobliv_b_mo3'] = sobliv[2]                           # Recruitment Info
@@ -262,4 +303,4 @@ for uid in ids:
     new.loc[(uid, out_event), 'gender_2'] = client['gender'][events[0]]             # Recruitment Info
 
 # new.to_csv("updated.csv")
-project.import_records(to_import=new.reset_index(), import_format="df", date_format="YMD")
+# project.import_records(to_import=new.reset_index(), import_format="df", date_format="YMD")
