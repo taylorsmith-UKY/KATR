@@ -27,8 +27,8 @@ fields = ['idate', 'name', 'phone', 'coord', 'addr', 'dob', 'addr', 'disch_st', 
           'race', 'eth', 'almeds', 'opmeds', 'stints', 'tomeds', 'plnserv', 'bel_pop', 'preppmin', 'bneeds_b',
           'bneeds_v', 'sl_v', 'sobliv_b', 'sobliv_b_mo1_np', 'sobliv_b_mo2_np', 'sobliv_b_mo3_np', 'sobliv_b_mo4_np',
           'sobliv_b_mo5_np', 'sobliv_b_mo1_p', 'sobliv_b_mo2_p', 'sobliv_b_mo3_p', 'sobliv_b_mo4_p', 'sobliv_b_mo5_p',
-          'trans_b', 'trans_v', 'trans_t', 'employ_b', 'employ_v', 'employ_t', 'gpra_complete',
-          'sobliv_sp', 'trans_sp', 'employ_b_3', 'bneeds_sp']
+          'trans_b', 'trans_v', 'trans_t', 'employ_b', 'employ_v', 'employ_t', 'idate_gpra',
+          'sobliv_sp', 'trans_sp', 'employ_b_3', 'bneeds_sp', 'ctfoup']
 
 events = ['intake_arm_1', "discharge_arm_1", "3month_postdischar_arm_1", "12month_postintake_arm_1"]
 data = project.export_records(format_type="df", fields=fields, raw_or_label="raw", events=events)\
@@ -68,7 +68,7 @@ columns = ['dcoord', 'dname', 'comp_status', 'first_idate', 'disch_idate', 'mo3p
            bel_pop_2_cols + race_2_cols + eth_2_cols + sud_cols + sobliv_cols + \
           ['bneeds_b_2', 'bneeds_v_2', 'sobliv_b_2', 'sl_v_2', 'trans_b_2', 'trans_v_2', 'trans_t_2',
            'employ_b_2', 'employ_v_2', 'employ_t_2', 'age_2', 'mo_last_cont',
-           'comp_int', 'comp_dis', 'comp_3mo', 'comp_12mo']
+           'comp_int', 'comp_dis', 'comp_3mo', 'comp_12mo', 'terminated']
 
 index = pd.MultiIndex.from_product([ids, [out_event]], names=['cid', 'redcap_event_name'])
 new = pd.DataFrame(columns=columns, index=index)
@@ -78,6 +78,7 @@ new[eth_2_cols] = new[eth_2_cols].fillna(0).astype("int64")
 new[sud_cols] = new[sud_cols].fillna(0).astype("int64")
 new['sobliv_b_2'] = np.zeros(len(new), dtype=int)
 new['age_2'] = np.zeros(len(new), dtype=int)
+new['terminated'] = np.zeros(len(new), dtype=int)
 
 data[bel_pop_cols] = data[bel_pop_cols].fillna(0).astype("int64")
 data[race_cols] = data[race_cols].fillna(0).astype("int64")
@@ -90,8 +91,6 @@ data["trans_b"] = data["trans_b"].fillna(0).astype("int64")
 data["employ_b"] = data["employ_b"].fillna(0).astype("int64")
 data["gender"] = data["gender"].fillna(-1).astype("int64")
 data["age"] = data["age"].fillna(-1).astype("int64")
-
-
 
 for uid in ids:
     # Exclude clients with no valid intake data
@@ -128,7 +127,9 @@ for uid in ids:
     idate_12mo = ""
 
     # 12-MO FOLLOW-UP
-    if events[3] in client.index and client['gpra_complete'][events[3]] == 2:
+    if events[3] in client.index and (str(client['idate'][events[3]]) != "" and
+                                      str(client['idate'][events[3]]) != "nan" and
+                                      client['ctfoup'][events[3]] != 0):
         comp_12mo = 1
         last_event = events[3]
         idate_12mo = dt.strptime(client['idate'][last_event], date_format)
@@ -143,12 +144,14 @@ for uid in ids:
         idate_12mo = ""
 
     # 3MO FOLLOW-UP
-    if events[2] in client.index and client['gpra_complete'][events[2]] == 2:
+    if events[2] in client.index and (str(client['idate'][events[2]]) != "" and
+                                      str(client['idate'][events[2]]) != "nan" and
+                                      client['ctfoup'][events[2]] != 0):
         comp_3mo = 1
         idate_3mo = dt.strptime(client['idate'][events[2]], date_format)
         if inv_data.loc[uid, "cload3mo"] == "" or type(inv_data.loc[uid, "cload3mo"]) == float:
             needload = 1
-        if comp_stat > 0:
+        if comp_stat == 0:
             last_event = events[2]
             last_idate = idate_3mo
             dnext = intake_dt + rdelt(months=12)
@@ -159,35 +162,35 @@ for uid in ids:
         idate_3mo = ""
 
     # DISCHARGE
-    if events[1] in client.index and client['gpra_complete'][events[1]] == 2:
-        comp_dis = 1
+    if events[1] in client.index and (str(client['idate'][events[1]]) != "" and
+                                      str(client['idate'][events[1]]) != "nan"):
+
         if inv_data.loc[uid, "cloaddis"] == "" or type(inv_data.loc[uid, "cloaddis"]) == float:
             needload = 1
-        # if client['disch_st'][events[1]] == 2:
-        #     comp_stat = 10
-        # elif client['disch_st'][events[1]] == 3:
-        #     comp_stat = 11
-        if comp_stat > 0:
-            comp_stat = 2
-            idate_dis = dt.strptime(client['idate'][events[1]], date_format)
-            last_event = events[1]
-            last_idate = idate_dis
-            dnext = intake_dt + rdelt(months=6)
-            ndnext = (dnext - dt.today()).days
+        if comp_stat == 0:
+            if client['disch_st'][events[1]] != 2:
+                comp_dis = 1
+                comp_stat = 2
+                idate_dis = dt.strptime(client['idate'][events[1]], date_format)
+                last_event = events[1]
+                last_idate = idate_dis
+                dnext = intake_dt + rdelt(months=6)
+                ndnext = (dnext - dt.today()).days
 
     else:
         comp_dis = 0
         idate_dis = ""
 
     # INTAKE
-    if events[0] in client.index and client['gpra_complete'][events[0]] == 2:
+    if events[0] in client.index and (str(client['idate'][events[0]]) != "" and
+                                      str(client['idate'][events[0]]) != "nan"):
         comp_int = 1
         idate_int = dt.strptime(client['idate'][events[0]], date_format)
         if comp_stat == 0:
             last_event = events[0]
             last_idate = idate_int
             dnext = last_idate + rdelt(months=6)
-            ndnext = (dnext - dt.today())
+            ndnext = (dnext - dt.today()).days
             comp_stat = 1
             if uid not in inv_data.index.values or inv_data.loc[uid, "cardmail"] == "" or \
                     type(inv_data.loc[uid, "cardmail"]) == float:
@@ -203,14 +206,15 @@ for uid in ids:
     # Termination status
     terminated = 0
     if events[1] in client.index:
-        if client['disch_st'][events[1]] == 10:     # Coordinator marked discharge status as "Terminated"
-            if comp_stat < 2:                       # If later interviews are completed, ignore disch_st
+        if client['disch_st'][events[1]] == 2:     # Coordinator marked discharge status as "Terminated"
+            if comp_stat < 3:                       # If later interviews are completed, ignore disch_st
                 terminated = 1
+                comp_stat = 10
 
     # If never received any funds, terminate them from study
-    spent_cols = ['bneeds_sp', 'sobliv_sp', 'trans_sp', 'employ_b_3', 'bneeds_sp']
-    if comp_dis and client.loc[events[1]][spent_cols].sum() == 0:
-        terminated = 1
+    # spent_cols = ['bneeds_sp', 'sobliv_sp', 'trans_sp', 'employ_b_3', 'bneeds_sp']
+    # if comp_dis and client.loc[events[1]][spent_cols].sum() == 0:
+    #     terminated = 1
 
     # Determine the number of days since last contact, including monthly check-ins
     ndlast = (dt.today() - last_idate).days
@@ -249,18 +253,17 @@ for uid in ids:
     new.loc[(uid, out_event), 'serv_reg'] = serv_reg                                # Program Completion
     new.loc[(uid, out_event), 'mo_last_cont'] = mslc                                # Program Completion
 
-    new.loc[(uid, out_event), 'idate_int'] = idate_int  # Program Completion
-    new.loc[(uid, out_event), 'idate_dis'] = idate_dis  # Program Completion
-    new.loc[(uid, out_event), 'idate_3mo'] = idate_3mo  # Program Completion
-    new.loc[(uid, out_event), 'idate_12mo'] = idate_12mo  # Program Completion
+    new.loc[(uid, out_event), 'first_idate'] = idate_int.strftime(date_format)  # Program Completion
+    new.loc[(uid, out_event), 'disch_idate'] = idate_int.strftime(date_format)  # Program Completion
+    new.loc[(uid, out_event), 'mo3post'] = idate_int.strftime(date_format)  # Program Completion
+    new.loc[(uid, out_event), 'yrcomp'] = idate_int.strftime(date_format)  # Program Completion
 
     # Interviews completed
-    new.loc[(uid, out_event), 'comp_int'] = idate_int  # Program Completion
-    new.loc[(uid, out_event), 'comp_dis'] = idate_dis  # Program Completion
-    new.loc[(uid, out_event), 'comp_3mo'] = idate_3mo  # Program Completion
-    new.loc[(uid, out_event), 'comp_12mo'] = idate_12mo  # Program Completion
+    new.loc[(uid, out_event), 'comp_int'] = comp_int  # Program Completion
+    new.loc[(uid, out_event), 'comp_dis'] = comp_dis  # Program Completion
+    new.loc[(uid, out_event), 'comp_3mo'] = comp_3mo  # Program Completion
+    new.loc[(uid, out_event), 'comp_12mo'] = comp_12mo  # Program Completion
     new.loc[(uid, out_event), 'terminated'] = terminated  # Program Completion
-
 
     new.loc[(uid, out_event), 'sobliv_b_mo1'] = sobliv[0]                           # Recruitment Info
     new.loc[(uid, out_event), 'sobliv_b_mo2'] = sobliv[1]                           # Recruitment Info
@@ -302,5 +305,5 @@ for uid in ids:
     new.loc[(uid, out_event), 'employ_t_2'] = client['employ_t'][events[0]]         # Recruitment Info
     new.loc[(uid, out_event), 'gender_2'] = client['gender'][events[0]]             # Recruitment Info
 
-# new.to_csv("updated.csv")
+new.to_csv("updated.csv")
 # project.import_records(to_import=new.reset_index(), import_format="df", date_format="YMD")
