@@ -5,6 +5,7 @@ from dateutil.relativedelta import relativedelta as rdelt
 import numpy as np
 import json
 from utils import build_checkbox_cols as bcc
+from utils import evaluate_event as ee
 
 api_url = 'https://redcap.uky.edu/redcap/api/'
 with open("api_key.txt", "r") as f:
@@ -23,7 +24,7 @@ inv_data = project.export_records(format_type="df", fields=fields_inv, raw_or_la
 inv_data.index = inv_data.index.get_level_values(0)
 
 # Import interview data from REDCap
-fields = ['idate', 'name', 'phone', 'coord', 'addr', 'dob', 'addr', 'disch_st', 'cty', 'age', 'gender', 'email',
+fields = ['idate', 'name', 'phone', 'coord', 'dob', 'addr', 'disch_st', 'cty', 'age', 'gender', 'email',
           'race', 'eth', 'almeds', 'opmeds', 'stints', 'tomeds', 'plnserv', 'bel_pop', 'preppmin', 'bneeds_b',
           'bneeds_v', 'sl_v', 'sobliv_b', 'sobliv_b_mo1_np', 'sobliv_b_mo2_np', 'sobliv_b_mo3_np', 'sobliv_b_mo4_np',
           'sobliv_b_mo5_np', 'sobliv_b_mo1_p', 'sobliv_b_mo2_p', 'sobliv_b_mo3_p', 'sobliv_b_mo4_p', 'sobliv_b_mo5_p',
@@ -39,13 +40,13 @@ chdata = project.export_records(format_type="df", fields=["chkdate"], events=["m
 
 # Generate list of column names for multiple-selection fields
 bel_pop_cols = bcc("bel_pop", data.columns)
-bel_pop_2_cols = [x.replace("bel_pop", "bel_pop_2") for x in bel_pop_cols]
+bel_pop_2_cols = [x.replace("bel_pop", "bel_pop_2") for x in bel_pop_cols]      # Copy to 2nd field for ease of viewing
 
 race_cols = bcc("race", data.columns)
-race_2_cols = [x.replace("race", "race_2") for x in bel_pop_cols]
+race_2_cols = [x.replace("race", "race_2") for x in bel_pop_cols]               # Copy to 2nd field for ease of viewing
 
 eth_cols = bcc("eth", data.columns)
-eth_2_cols = [x.replace("eth", "eth_2") for x in bel_pop_cols]
+eth_2_cols = [x.replace("eth", "eth_2") for x in bel_pop_cols]                  # Copy to 2nd field for ease of viewing
 
 diag_cols = {'alcohol': bcc("almeds", data.columns)[-1],
              'opioids': bcc("opmeds", data.columns)[-1],
@@ -99,7 +100,8 @@ for uid in ids:
         new = new.drop(uid, level=0)
         continue
 
-    client = data.loc[uid]                                  # Extract individual client data
+    # Pull out the individual client data
+    client = data.loc[uid]
 
     intake = client['idate'][events[0]]                     # For use calculating next interview deadline
     intake_dt = dt.strptime(intake, date_format)
@@ -117,91 +119,62 @@ for uid in ids:
     new.loc[(uid, out_event), race_2_cols] = client.loc[events[0], race_cols]
     new.loc[(uid, out_event), eth_2_cols] = client.loc[events[0], eth_cols]
 
-    # Determine intake interview completion and associated values for reporting purposes
+
+    event_filters = {"intake_arm_1": {},
+                     "discharge_arm_1": {"disch_st": {"operation": 'eq', 'value': 2}},
+                     "3mo_post_dis": {"ctfoup": {"operation": "neq", "value": 0}},
+                     '12mo_post_int': {"ctfoup": {"operation": "neq", "value": 0}}}
+
+    event_values = {"intake_arm_1": ['idate'],
+                    "discharge_arm_1": ['idate'],
+                    "3mo_post_disch_arm_1": ['idate'],
+                    "12mo_post_int_arm_1": ['idate']}
+
+    int_comps = []
+    int_dates = []
     comp_stat = 0
+    last_idate = ""
+    last_event = ""
+    for i in range(len(events))[::-1]:
+        comp, tdate = ee(client, events[i])
+        int_comps.append(comp)
+        int_dates.append(tdate)
+        if comp and comp_stat == 0:
+            comp_stat = 4 - i
+            last_idate = tdate
+            last_event = events[i]
+
+    # Not key component: estimates deadline for next interview, the number of days until that date, and whether
+    # incentive dispersal cards need to be mailed and/or filled out
     needsend = 0
     needload = 0
-    idate_int = ""
-    idate_dis = ""
-    idate_3mo = ""
-    idate_12mo = ""
-
-    # 12-MO FOLLOW-UP
-    if events[3] in client.index and (str(client['idate'][events[3]]) != "" and
-                                      str(client['idate'][events[3]]) != "nan" and
-                                      client['ctfoup'][events[3]] != 0):
-        comp_12mo = 1
-        last_event = events[3]
-        idate_12mo = dt.strptime(client['idate'][last_event], date_format)
-        last_idate = idate_12mo
+    if comp_stat == 4:
         dnext = ""
         ndnext = ""
-        comp_stat = 4
         if inv_data.loc[uid, "cload12m"] == "" or type(inv_data.loc[uid, "cload12m"]) == float:
             needload = 1
-    else:
-        comp_12mo = 0
-        idate_12mo = ""
-
-    # 3MO FOLLOW-UP
-    if events[2] in client.index and (str(client['idate'][events[2]]) != "" and
-                                      str(client['idate'][events[2]]) != "nan" and
-                                      client['ctfoup'][events[2]] != 0):
-        comp_3mo = 1
-        idate_3mo = dt.strptime(client['idate'][events[2]], date_format)
+    elif comp_stat == 3:
+        dnext = intake_dt + rdelt(months=12)
+        ndnext = (dnext - dt.today()).days
+        comp_stat = 3
         if inv_data.loc[uid, "cload3mo"] == "" or type(inv_data.loc[uid, "cload3mo"]) == float:
             needload = 1
-        if comp_stat == 0:
-            last_event = events[2]
-            last_idate = idate_3mo
-            dnext = intake_dt + rdelt(months=12)
+    elif comp_stat == 2:
+        if client['disch_st'][events[1]] != 2:
+            dnext = intake_dt + rdelt(months=6)
             ndnext = (dnext - dt.today()).days
-            comp_stat = 3
-    else:
-        comp_3mo = 0
-        idate_3mo = ""
-
-    # DISCHARGE
-    if events[1] in client.index and (str(client['idate'][events[1]]) != "" and
-                                      str(client['idate'][events[1]]) != "nan"):
-
-        if inv_data.loc[uid, "cloaddis"] == "" or type(inv_data.loc[uid, "cloaddis"]) == float:
+            if inv_data.loc[uid, "cloaddis"] == "" or type(inv_data.loc[uid, "cloaddis"]) == float:
+                needload = 1
+    elif comp_stat == 1:
+        dnext = last_idate + rdelt(months=6)
+        ndnext = (dnext - dt.today()).days
+        if uid not in inv_data.index.values or inv_data.loc[uid, "cardmail"] == "" or \
+                type(inv_data.loc[uid, "cardmail"]) == float:
+            needsend = 1
             needload = 1
-        if comp_stat == 0:
-            if client['disch_st'][events[1]] != 2:
-                comp_dis = 1
-                comp_stat = 2
-                idate_dis = dt.strptime(client['idate'][events[1]], date_format)
-                last_event = events[1]
-                last_idate = idate_dis
-                dnext = intake_dt + rdelt(months=6)
-                ndnext = (dnext - dt.today()).days
-
-    else:
-        comp_dis = 0
-        idate_dis = ""
-
-    # INTAKE
-    if events[0] in client.index and (str(client['idate'][events[0]]) != "" and
-                                      str(client['idate'][events[0]]) != "nan"):
-        comp_int = 1
-        idate_int = dt.strptime(client['idate'][events[0]], date_format)
-        if comp_stat == 0:
-            last_event = events[0]
-            last_idate = idate_int
-            dnext = last_idate + rdelt(months=6)
-            ndnext = (dnext - dt.today()).days
-            comp_stat = 1
-            if uid not in inv_data.index.values or inv_data.loc[uid, "cardmail"] == "" or \
-                    type(inv_data.loc[uid, "cardmail"]) == float:
-                needsend = 1
-                needload = 1
-            elif type(inv_data.loc[uid, "clicont"]) == float or inv_data.loc[uid, "clicont"] == "" or \
-                    type(inv_data.loc[uid, "cloadint"]) == float or inv_data.loc[uid, "cloadint"] == "":
-                needload = 1
-    else:
-        comp_int = 0
-        idate_int = ""
+        elif type(inv_data.loc[uid, "clicont"]) == float or inv_data.loc[uid, "clicont"] == "" or \
+                type(inv_data.loc[uid, "cloadint"]) == float or inv_data.loc[uid, "cloadint"] == "":
+            needload = 1
 
     # Termination status
     terminated = 0
@@ -210,11 +183,6 @@ for uid in ids:
             if comp_stat < 3:                       # If later interviews are completed, ignore disch_st
                 terminated = 1
                 comp_stat = 10
-
-    # If never received any funds, terminate them from study
-    # spent_cols = ['bneeds_sp', 'sobliv_sp', 'trans_sp', 'employ_b_3', 'bneeds_sp']
-    # if comp_dis and client.loc[events[1]][spent_cols].sum() == 0:
-    #     terminated = 1
 
     # Determine the number of days since last contact, including monthly check-ins
     ndlast = (dt.today() - last_idate).days
@@ -253,16 +221,16 @@ for uid in ids:
     new.loc[(uid, out_event), 'serv_reg'] = serv_reg                                # Program Completion
     new.loc[(uid, out_event), 'mo_last_cont'] = mslc                                # Program Completion
 
-    new.loc[(uid, out_event), 'first_idate'] = idate_int.strftime(date_format)  # Program Completion
-    new.loc[(uid, out_event), 'disch_idate'] = idate_int.strftime(date_format)  # Program Completion
-    new.loc[(uid, out_event), 'mo3post'] = idate_int.strftime(date_format)  # Program Completion
-    new.loc[(uid, out_event), 'yrcomp'] = idate_int.strftime(date_format)  # Program Completion
+    new.loc[(uid, out_event), 'first_idate'] = int_dates[0].strftime(date_format)  # Program Completion
+    new.loc[(uid, out_event), 'disch_idate'] = int_dates[1].strftime(date_format)  # Program Completion
+    new.loc[(uid, out_event), 'mo3post'] = int_dates[2].strftime(date_format)  # Program Completion
+    new.loc[(uid, out_event), 'yrcomp'] = int_dates[3].strftime(date_format)  # Program Completion
 
     # Interviews completed
-    new.loc[(uid, out_event), 'comp_int'] = comp_int  # Program Completion
-    new.loc[(uid, out_event), 'comp_dis'] = comp_dis  # Program Completion
-    new.loc[(uid, out_event), 'comp_3mo'] = comp_3mo  # Program Completion
-    new.loc[(uid, out_event), 'comp_12mo'] = comp_12mo  # Program Completion
+    new.loc[(uid, out_event), 'comp_int'] = int_comps[0]  # Program Completion
+    new.loc[(uid, out_event), 'comp_dis'] = int_comps[1]  # Program Completion
+    new.loc[(uid, out_event), 'comp_3mo'] = int_comps[2]  # Program Completion
+    new.loc[(uid, out_event), 'comp_12mo'] = int_comps[3]  # Program Completion
     new.loc[(uid, out_event), 'terminated'] = terminated  # Program Completion
 
     new.loc[(uid, out_event), 'sobliv_b_mo1'] = sobliv[0]                           # Recruitment Info
@@ -282,11 +250,7 @@ for uid in ids:
     new.loc[(uid, out_event), 'needload'] = needload
 
     # Copy values to corresponding instruments for convenience when viewing in REDCap
-    new.loc[(uid, out_event), 'dname'] = client['name']['intake_arm_1']             # Program Completion
-    new.loc[(uid, out_event), 'dcoord'] = client['coord']['intake_arm_1']           # Program Completion
     new.loc[(uid, out_event), 'first_idate'] = intake                               # Program Completion
-
-    new.loc[(uid, out_event), 'rname'] = client['name']['intake_arm_1']             # Inventory Management
     new.loc[(uid, out_event), 'dphone'] = client['phone'][last_event]               # Inventory Management
     new.loc[(uid, out_event), 'addr2'] = client['addr'][last_event]                 # Inventory Management
 
@@ -304,6 +268,9 @@ for uid in ids:
     new.loc[(uid, out_event), 'employ_v_2'] = client['employ_v'][events[0]]         # Recruitment Info
     new.loc[(uid, out_event), 'employ_t_2'] = client['employ_t'][events[0]]         # Recruitment Info
     new.loc[(uid, out_event), 'gender_2'] = client['gender'][events[0]]             # Recruitment Info
+    new.loc[(uid, out_event), 'dname'] = client['name']['intake_arm_1']             # Program Completion
+    new.loc[(uid, out_event), 'dcoord'] = client['coord']['intake_arm_1']           # Program Completion
+    new.loc[(uid, out_event), 'rname'] = client['name']['intake_arm_1']             # Inventory Management
 
 new.to_csv("updated.csv")
 # project.import_records(to_import=new.reset_index(), import_format="df", date_format="YMD")

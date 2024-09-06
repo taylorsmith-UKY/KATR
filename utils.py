@@ -69,3 +69,20 @@ def build_checkbox_cols(base_name, all_cols):
     cols = [x for x in all_cols if f"{base_name}___" in x and "____" not in x]
     vals = [x[len(base_name) + 3:] for x in cols]
     return cols
+
+
+# Example filter_vals
+# filter_vals = {'disch_st': {'operation': 'eq', 'value': 4}}
+#
+def evaluate_event(client: pd.DataFrame, event: str, filter_vals: dict, date_format: str="%Y-%m-%d"):
+    if event in client.index and (str(client['idate'][event]) != "" and
+                                  str(client['idate'][event]) != "nan"):
+        for key, value in filter_vals.items():
+            if value['operation'] == 'eq':
+                if client[key][event] == value['value']:
+                    return 0, ""
+            else:
+                if client[key][event] != value['value']:
+                    return 0, ""
+        return 1, dt.strptime(client['idate'][event], date_format)
+    return 0, ""
