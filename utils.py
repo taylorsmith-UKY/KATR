@@ -73,16 +73,20 @@ def build_checkbox_cols(base_name, all_cols):
 
 # Example filter_vals
 # filter_vals = {'disch_st': {'operation': 'eq', 'value': 4}}
-#
+# For the provided event and filters, report NOT completed and no date is returned
 def evaluate_event(client: pd.DataFrame, event: str, filter_vals: dict, date_format: str="%Y-%m-%d"):
     if event in client.index and (str(client['idate'][event]) != "" and
                                   str(client['idate'][event]) != "nan"):
         for key, value in filter_vals.items():
-            if value['operation'] == 'eq':
-                if client[key][event] == value['value']:
-                    return 0, ""
-            else:
-                if client[key][event] != value['value']:
-                    return 0, ""
+            if 'operation' in value.keys():
+                if value['operation'] == 'eq':
+                    if client[key][event] == value['value']:
+                        return 0, ""
+                elif 'operation' in value.keys():
+                    if client[key][event] != value['value']:
+                        return 0, ""
+                else:
+                    raise ValueError("Incorrect value provided for \"operation\". "
+                                     "Currently, the only options are \"eq\" \"neq\"")
         return 1, dt.strptime(client['idate'][event], date_format)
     return 0, ""
