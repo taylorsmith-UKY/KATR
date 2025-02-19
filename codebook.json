@@ -1,0 +1,2647 @@
+{
+  "coord": {
+    "map": {
+      "dmhu241": "Donna Hurst",
+      "rcbr241": "Rachel Bradford",
+      "ssgr233": "Samantha Grothaus"
+    },
+    "type": "dropdown"
+  },
+  "itype": {
+    "map": {
+      "1": "Intake",
+      "2": "Follow-up",
+      "3": "Discharge"
+    },
+    "type": "radio"
+  },
+  "cty": {
+    "map": {
+      "1": "Boone",
+      "2": "Bullitt",
+      "3": "Campbell",
+      "4": "Carroll",
+      "5": "Floyd",
+      "6": "Gallatin",
+      "7": "Grant",
+      "8": "Harlan",
+      "9": "Henry",
+      "10": "Jefferson",
+      "11": "Kenton",
+      "12": "Knott",
+      "13": "Lee",
+      "14": "Letcher",
+      "15": "Oldham",
+      "16": "Owsley",
+      "17": "Pendleton",
+      "18": "Perry",
+      "19": "Pike",
+      "20": "Shelby",
+      "21": "Spencer",
+      "22": "Wolfe"
+    },
+    "type": "dropdown"
+  },
+  "emrel1": {
+    "map": {
+      "1": "Mother/Father",
+      "2": "Sister/Brother",
+      "3": "Spouse/Partner/Girlfriend/Boyfriend",
+      "4": "Ex-Spouse/Ex-Partner/Ex-Girlfriend/Ex-Boyfriend",
+      "5": "Grandmother/Grandfather",
+      "6": "Child",
+      "7": "Cousin",
+      "8": "Aunt/Uncle",
+      "9": "Mother in-law/Father in-law",
+      "10": "Sister in-law/Brother in-law",
+      "11": "Employer/Co-worker",
+      "12": "Friend/Neighbor",
+      "50": "Other",
+      "-1": "Refused",
+      "-2": "Not Applicable",
+      "-3": "Don't Know"
+    },
+    "type": "dropdown"
+  },
+  "emrel2": {
+    "map": {
+      "1": "Mother/Father",
+      "2": "Sister/Brother",
+      "3": "Spouse/Partner/Girlfriend/Boyfriend",
+      "4": "Ex-Spouse/Ex-Partner/Ex-Girlfriend/Ex-Boyfriend",
+      "5": "Grandmother/Grandfather",
+      "6": "Child",
+      "7": "Cousin",
+      "8": "Aunt/Uncle",
+      "9": "Mother in-law/Father in-law",
+      "10": "Sister in-law/Brother in-law",
+      "11": "Employer/Co-worker",
+      "12": "Friend/Neighbor",
+      "50": "Other",
+      "-1": "Refused",
+      "-2": "Not Applicable",
+      "-3": "Don't Know"
+    },
+    "type": "dropdown"
+  },
+  "hous": {
+    "map": {
+      "1": "Shelter",
+      "2": "Street/Outdoors",
+      "3": "Institution (Hospital, Jail, Nursing Home)",
+      "4": "Own/Rent",
+      "5": "Someone else's home, room, trailer or house (include couch surfing)",
+      "6": "Dormitory/College Residence",
+      "7": "Halfway House or Transitional Living",
+      "8": "Residential Treatment",
+      "9": "Recovery Residence/Sober Living",
+      "50": "Other Housed",
+      "-1": "Refused"
+    },
+    "type": "radio"
+  },
+  "ftrecv": {
+    "map": {
+      "1": "Yes",
+      "0": "No",
+      "-1": "Refused",
+      "-2": "Not Applicable",
+      "-3": "Don't Know"
+    },
+    "type": "radio"
+  },
+  "lwu": {
+    "map": {
+      "1": "Yes",
+      "0": "No",
+      "2": "No, lives alone",
+      "-1": "Refused"
+    },
+    "type": "radio"
+  },
+  "sjt": {
+    "map": {
+      "0": "Not enrolled",
+      "1": "Enrolled full time",
+      "2": "Enrolled part time",
+      "-1": "Refused"
+    },
+    "type": "radio"
+  },
+  "edu": {
+    "map": {
+      "1": "Less than 12th Grade",
+      "2": "12th Grade/High School Diploma/Equivalent",
+      "3": "Vocational/Technical Diploma",
+      "4": "Some College or University",
+      "5": "Bachelor's Degree",
+      "6": "Graduate Work/Graduate Degree",
+      "50": "Other",
+      "-1": "Refused"
+    },
+    "type": "radio"
+  },
+  "emp": {
+    "map": {
+      "1": "Employed Full Time (35+ hours per week, or would be if not for leave or excused absence)",
+      "2": "Employed Part Time",
+      "3": "Unemployed but looking for work",
+      "4": "Not employed not looking for work",
+      "5": "Not working due to a disability",
+      "6": "Retired not working",
+      "50": "Not working other (specify)",
+      "-1": "Refused"
+    },
+    "type": "radio"
+  },
+  "cple": {
+    "map": {
+      "1": "Food",
+      "2": "Transportation",
+      "3": "Utilities",
+      "4": "Childcare",
+      "5": "Clothing",
+      "6": "Rent/Housing",
+      "7": "Telephone Service",
+      "8": "Health Insurance",
+      "-1": "Refused"
+    },
+    "type": "checkbox"
+  },
+  "inc": {
+    "map": {
+      "1": "$0 to $9,999",
+      "2": "$10,000-$14,999",
+      "3": "$15,000-$19,999",
+      "4": "$20,000-$34,999",
+      "5": "$35,000-$49,999",
+      "6": "$50,000-$74,999",
+      "7": "$75,000-$99,999",
+      "8": "$100,000-$199,999",
+      "9": "$200,000 or more",
+      "-1": "Refused"
+    },
+    "type": "radio"
+  },
+  "att_msg": {
+    "map": {
+      "1": "Yes",
+      "0": "No",
+      "-1": "Refused"
+    },
+    "type": "radio"
+  },
+  "att_msup": {
+    "map": {
+      "1": "Yes",
+      "0": "No",
+      "-1": "Refused",
+      "-2": "Not Applicable",
+      "-3": "Don't Know"
+    },
+    "type": "radio"
+  },
+  "sfam": {
+    "map": {
+      "1": "Yes",
+      "0": "No",
+      "-1": "Refused"
+    },
+    "type": "radio"
+  },
+  "who_wt": {
+    "map": {
+      "1": "Church member",
+      "2": "Family member",
+      "3": "Friend",
+      "4": "Romantic Partner",
+      "5": "Sponsor",
+      "50": "Other",
+      "7": "No one",
+      "-1": "Refused",
+      "-2": "Not Applicable",
+      "-3": "Don't Know"
+    },
+    "type": "checkbox"
+  },
+  "rel_sat": {
+    "map": {
+      "1": "Very Dissatisfied",
+      "2": "Dissatisfied",
+      "3": "Neither Satisfied nor Dissatisfied",
+      "4": "Satisfied",
+      "5": "Very Satisfied",
+      "-1": "Refused"
+    },
+    "type": "radio"
+  },
+  "real_nc": {
+    "map": {
+      "1": "Yes",
+      "0": "No",
+      "-1": "Refused"
+    },
+    "type": "radio"
+  },
+  "tts": {
+    "map": {
+      "1": "Half an hour or less",
+      "2": "Between half an hour and one hour",
+      "3": "Between one hour and one and a half hours",
+      "4": "Between one and a half hours and two hours",
+      "5": "Two hours or more",
+      "-1": "Refused"
+    },
+    "type": "radio"
+  },
+  "mts": {
+    "map": {
+      "1": "Own car",
+      "2": "Borrowed car",
+      "3": "Friend/family",
+      "4": "Ride share",
+      "5": "Public transportation",
+      "6": "Walk",
+      "7": "Bike",
+      "50": "Other",
+      "-1": "Refused",
+      "-2": "Not Applicable",
+      "-3": "Don't Know"
+    },
+    "type": "radio"
+  },
+  "d_used_ref": {
+    "map": {
+      "-1": "Refused"
+    },
+    "type": "checkbox"
+  },
+  "d_subs_ref": {
+    "map": {
+      "1": "Refused"
+    },
+    "type": "checkbox"
+  },
+  "umeth": {
+    "map": {
+      "1": "Oral",
+      "2": "Intranasal",
+      "3": "Vaping",
+      "4": "Smoking",
+      "5": "Non-IV injection",
+      "6": "Intravenous (IV) Injection",
+      "50": "Other",
+      "-1": "Refused"
+    },
+    "type": "checkbox"
+  },
+  "t_trt": {
+    "map": {
+      "1": "One time",
+      "2": "Two times",
+      "3": "Three times",
+      "4": "Four times",
+      "5": "Five times",
+      "6": "Six or more times",
+      "7": "Never",
+      "-1": "Refused"
+    },
+    "type": "radio"
+  },
+  "lat_trt": {
+    "map": {
+      "1": "Less than 6 months ago",
+      "2": "Between 6 months ago & 1 year ago",
+      "3": "One to two years ago",
+      "4": "Two to three years ago",
+      "5": "Three to four years ago",
+      "6": "Five or more years ago",
+      "-1": "Refused"
+    },
+    "type": "radio"
+  },
+  "t_attrec": {
+    "map": {
+      "1": "This is my first time attempting recovery",
+      "2": "2-3 times",
+      "3": "4-6 times",
+      "4": "6+ times",
+      "-1": "Refused",
+      "-2": "Not Applicable",
+      "-3": "Don't Know"
+    },
+    "type": "radio"
+  },
+  "exc": {
+    "map": {
+      "1": "Yes",
+      "0": "No",
+      "-1": "Refused"
+    },
+    "type": "radio"
+  },
+  "exc_int": {
+    "map": {
+      "1": "Naloxone (Narcan)",
+      "2": "Care from Primary Doctor",
+      "3": "Supervision by someone else",
+      "4": "Care in an emergency room",
+      "5": "Admission to hospital",
+      "50": "Other",
+      "-1": "Refused"
+    },
+    "type": "checkbox"
+  },
+  "t_exc": {
+    "map": {
+      "1": "Single incident",
+      "2": "Multiple incidences",
+      "-1": "Refused",
+      "-2": "Not Applicable",
+      "-3": "Don't Know"
+    },
+    "type": "radio"
+  },
+  "almeds": {
+    "map": {
+      "1": "Naltrexone {nal_al:icons}",
+      "2": "Extended-release Naltrexone {ernal_al:icons}",
+      "3": "Disulfiram {dis_al:icons}",
+      "4": "Acamprosate {acam_al:icons}",
+      "5": "Did NOT receive an FDA-APPROVED medication for diagnosed alcohol use disorder",
+      "6": "Client does not report such a diagnosis"
+    },
+    "type": "checkbox"
+  },
+  "opmeds": {
+    "map": {
+      "1": "Methadone {meth_op:icons}",
+      "2": "Buprenorphine {bup_op:icons}",
+      "3": "Naltrexone {nal_op:icons}",
+      "4": "Extended-release Naltrexone {ernal_op:icons}",
+      "5": "Did NOT receive an FDA-APPROVED medication for diagnosed opioid use disorder",
+      "6": "Client does not report such a diagnosis"
+    },
+    "type": "checkbox"
+  },
+  "stints": {
+    "map": {
+      "1": "Contingency Management {cmgm_st:icons}",
+      "2": "Community Reinforcement {core_st:icons}",
+      "3": "Cognitive Behavioral Therapy {cbt_st:icons}",
+      "4": "Other evidence-based intervention {oth_st:icons}",
+      "5": "Did NOT receive any intervention for a diagnosed stimulant use disorder",
+      "6": "Client does not report such a diagnosis"
+    },
+    "type": "checkbox"
+  },
+  "tomeds": {
+    "map": {
+      "1": "Nicotine Replacement {nrep_to:icons}",
+      "2": "Bupropion {bup_to:icons}",
+      "3": "Varenicline {vare_to:icons}",
+      "4": "Did NOT receive an FDA-APPROVED medication for a tobacco use disorder",
+      "5": "Client does not report such a diagnosis"
+    },
+    "type": "checkbox"
+  },
+  "t_arr_r": {
+    "map": {
+      "1": "Refused"
+    },
+    "type": "checkbox"
+  },
+  "arr_drel": {
+    "map": {
+      "1": "Yes",
+      "0": "No",
+      "-1": "Refused",
+      "-2": "Not Applicable",
+      "-3": "Don't Know"
+    },
+    "type": "radio"
+  },
+  "wc_trsen": {
+    "map": {
+      "1": "Yes",
+      "0": "No",
+      "-1": "Refused"
+    },
+    "type": "radio"
+  },
+  "par_prob": {
+    "map": {
+      "1": "Probation",
+      "2": "Parole",
+      "3": "Intensive Pretrial Supervision",
+      "0": "No",
+      "-1": "Refused"
+    },
+    "type": "radio"
+  },
+  "dco_def": {
+    "map": {
+      "1": "Drug Court Program",
+      "2": "Deferred prosecution agreement",
+      "0": "No, neither of these",
+      "-1": "Refused"
+    },
+    "type": "radio"
+  },
+  "chrp": {
+    "map": {
+      "1": "Yes",
+      "0": "No",
+      "-1": "Refused",
+      "-2": "Not Applicable",
+      "-3": "Don't Know"
+    },
+    "type": "radio"
+  },
+  "phys_trt": {
+    "map": {
+      "1": "Yes-Inpatient",
+      "2": "Yes-Outpatient",
+      "0": "No",
+      "-1": "Refused",
+      "-2": "Not Applicable",
+      "-3": "Don't Know"
+    },
+    "type": "radio"
+  },
+  "drug_trt": {
+    "map": {
+      "1": "Yes-Inpatient",
+      "2": "Yes-Outpatient",
+      "0": "No",
+      "-1": "Refused",
+      "-2": "Not Applicable",
+      "-3": "Don't Know"
+    },
+    "type": "radio"
+  },
+  "ed_trt": {
+    "map": {
+      "1": "Yes",
+      "0": "No",
+      "-1": "Refused",
+      "-2": "Not Applicable",
+      "-3": "Don't Know"
+    },
+    "type": "radio"
+  },
+  "med_lo": {
+    "map": {
+      "1": "Primary Care Provider",
+      "2": "Urgent Care",
+      "3": "Emergency Department",
+      "4": "Specialist doctor",
+      "5": "No care was sought",
+      "50": "Other (specify)"
+    },
+    "type": "checkbox"
+  },
+  "med_ins": {
+    "map": {
+      "1": "Yes",
+      "0": "No",
+      "-1": "Refused"
+    },
+    "type": "radio"
+  },
+  "ins_tp": {
+    "map": {
+      "1": "Medicare",
+      "2": "Medicaid",
+      "3": "Private Insurance or Employer Provided",
+      "4": "Tricare or other military health care",
+      "5": "An assistance program (example: medication assistance program)",
+      "50": "Any other type of health insurance or coverage plan (specify)",
+      "-1": "Refused"
+    },
+    "type": "checkbox"
+  },
+  "viotr": {
+    "map": {
+      "1": "Yes",
+      "0": "No",
+      "-1": "Refused",
+      "-2": "Not Applicable",
+      "-3": "Don't Know"
+    },
+    "type": "radio"
+  },
+  "phys_hrt": {
+    "map": {
+      "1": "Never",
+      "2": "A few times",
+      "3": "More than a few times",
+      "-1": "Refused",
+      "-2": "Not Applicable",
+      "-3": "Don't Know"
+    },
+    "type": "radio"
+  },
+  "ld1": {
+    "map": {
+      "1": "Yes",
+      "0": "No"
+    },
+    "type": "radio"
+  },
+  "ld2": {
+    "map": {
+      "1": "Yes",
+      "0": "No"
+    },
+    "type": "radio"
+  },
+  "ld3": {
+    "map": {
+      "1": "Yes",
+      "0": "No"
+    },
+    "type": "radio"
+  },
+  "ld4": {
+    "map": {
+      "1": "Yes",
+      "0": "No"
+    },
+    "type": "radio"
+  },
+  "ld5": {
+    "map": {
+      "1": "Yes",
+      "0": "No"
+    },
+    "type": "radio"
+  },
+  "qof": {
+    "map": {
+      "1": "Very Poor",
+      "2": "Poor",
+      "3": "Neither poor nor good",
+      "4": "Good",
+      "5": "Very good",
+      "-1": "Refused"
+    },
+    "type": "radio"
+  },
+  "serdep_r": {
+    "map": {
+      "-1": "Refused"
+    },
+    "type": "checkbox"
+  },
+  "seranx_r": {
+    "map": {
+      "-1": "Refused"
+    },
+    "type": "checkbox"
+  },
+  "halluc_r": {
+    "map": {
+      "-1": "Refused"
+    },
+    "type": "checkbox"
+  },
+  "conc_r": {
+    "map": {
+      "-1": "Refused"
+    },
+    "type": "checkbox"
+  },
+  "viol_r": {
+    "map": {
+      "-1": "Refused"
+    },
+    "type": "checkbox"
+  },
+  "suic_r": {
+    "map": {
+      "-1": "Refused"
+    },
+    "type": "checkbox"
+  },
+  "pr_mh_r": {
+    "map": {
+      "-1": "Refused"
+    },
+    "type": "checkbox"
+  },
+  "both_mh": {
+    "map": {
+      "1": "Not at all",
+      "2": "Slightly",
+      "3": "Moderately",
+      "4": "Considerably",
+      "5": "Extremely",
+      "6": "No reported mental health complaints in the past 30 days",
+      "-1": "Refused"
+    },
+    "type": "radio"
+  },
+  "mh_dia": {
+    "map": {
+      "1": "Yes",
+      "0": "No",
+      "-1": "Refused"
+    },
+    "type": "radio"
+  },
+  "gender": {
+    "map": {
+      "1": "Male",
+      "2": "Female",
+      "3": "Transgender (Male to Female)",
+      "4": "Transgender (Female to Male)",
+      "5": "Gender Non-Conforming",
+      "50": "Other",
+      "-1": "REFUSED"
+    },
+    "type": "radio"
+  },
+  "hisp": {
+    "map": {
+      "1": "Yes",
+      "0": "No",
+      "-1": "Refused"
+    },
+    "type": "radio"
+  },
+  "eth": {
+    "map": {
+      "1": "Central American",
+      "2": "Cuban",
+      "3": "Dominican",
+      "4": "Mexican",
+      "5": "Puerto Rican",
+      "6": "South American",
+      "50": "Other",
+      "-1": "Refused"
+    },
+    "type": "checkbox"
+  },
+  "race": {
+    "map": {
+      "1": "Black/African American",
+      "2": "White",
+      "3": "American Indian",
+      "4": "Alaska Native",
+      "5": "Asian Indian",
+      "6": "Chinese",
+      "7": "Filipino",
+      "8": "Japanese",
+      "9": "Korean",
+      "10": "Vietnamese",
+      "11": "Other Asian",
+      "12": "Native Hawaiian",
+      "13": "Guamanian/Chamorro",
+      "14": "Samoan",
+      "15": "Other Pacific Islander",
+      "50": "Other",
+      "-1": "Refused"
+    },
+    "type": "checkbox"
+  },
+  "olang": {
+    "map": {
+      "1": "Yes",
+      "0": "No",
+      "-1": "Refused"
+    },
+    "type": "radio"
+  },
+  "sexu": {
+    "map": {
+      "1": "Straight",
+      "2": "Homosexual",
+      "3": "Bisexual",
+      "4": "Asexual",
+      "5": "Queer, Pansexual/Questioning",
+      "50": "Other",
+      "-1": "Refused"
+    },
+    "type": "checkbox"
+  },
+  "rel_st": {
+    "map": {
+      "1": "Married",
+      "2": "Single",
+      "3": "Divorced",
+      "4": "Separated",
+      "5": "Widowed",
+      "6": "In a relationship",
+      "7": "In multiple relationships",
+      "-1": "Refused"
+    },
+    "type": "radio"
+  },
+  "preg": {
+    "map": {
+      "1": "Yes",
+      "0": "No",
+      "-3": "Do not know",
+      "-1": "Refused"
+    },
+    "type": "radio"
+  },
+  "children": {
+    "map": {
+      "1": "Yes",
+      "0": "No",
+      "-1": "Refused"
+    },
+    "type": "radio"
+  },
+  "n_min_ref": {
+    "map": {
+      "-1": "Refused"
+    },
+    "type": "checkbox"
+  },
+  "min_els": {
+    "map": {
+      "1": "Yes",
+      "0": "No",
+      "-3": "Do not know",
+      "-1": "Refused"
+    },
+    "type": "radio"
+  },
+  "min_ru": {
+    "map": {
+      "1": "Yes",
+      "0": "No",
+      "-3": "Do not know",
+      "-1": "Refused"
+    },
+    "type": "radio"
+  },
+  "serv": {
+    "map": {
+      "0": "No",
+      "1": "Yes, in the Armed Forces",
+      "2": "Yes, in the Reserves",
+      "3": "Yes, in the National Guard",
+      "4": "Yes, other uniformed services [includes NOAA, USPHS]"
+    },
+    "type": "radio"
+  },
+  "deploy": {
+    "map": {
+      "1": "Yes",
+      "0": "No",
+      "-1": "Refused",
+      "-2": "Not Applicable",
+      "-3": "Don't Know"
+    },
+    "type": "radio"
+  },
+  "comb_inj": {
+    "map": {
+      "1": "Yes",
+      "0": "No",
+      "-1": "Refused",
+      "-2": "Not Applicable",
+      "-3": "Don't Know"
+    },
+    "type": "radio"
+  },
+  "ptsd": {
+    "map": {
+      "1": "Yes",
+      "0": "No",
+      "-1": "Refused",
+      "-2": "Not Applicable",
+      "-3": "Don't Know"
+    },
+    "type": "radio"
+  },
+  "fh_sud": {
+    "map": {
+      "1": "Yes",
+      "0": "No",
+      "-1": "Refused",
+      "-2": "Not Applicable",
+      "-3": "Don't Know"
+    },
+    "type": "radio"
+  },
+  "fh_sud_relat": {
+    "map": {
+      "1": "Father",
+      "2": "Mother",
+      "3": "Siblings",
+      "4": "Grandparents",
+      "5": "Aunt/Uncle",
+      "6": "Cousin",
+      "50": "Other",
+      "-1": "Refused",
+      "-2": "Not Applicable",
+      "-3": "Don't Know"
+    },
+    "type": "checkbox"
+  },
+  "sact": {
+    "map": {
+      "1": "Yes",
+      "0": "No",
+      "-1": "Refused",
+      "-2": "Not Applicable",
+      "-3": "Don't Know"
+    },
+    "type": "radio"
+  },
+  "tst_hiv": {
+    "map": {
+      "1": "Yes",
+      "0": "No",
+      "-1": "Refused",
+      "-2": "Not Applicable",
+      "-3": "Don't Know"
+    },
+    "type": "radio"
+  },
+  "tst_hiv_pos": {
+    "map": {
+      "1": "Yes",
+      "0": "No",
+      "-1": "Refused",
+      "-2": "Not Applicable",
+      "-3": "Don't Know"
+    },
+    "type": "radio"
+  },
+  "hiv_trt": {
+    "map": {
+      "1": "Yes",
+      "0": "No",
+      "-1": "Refused",
+      "-2": "Not Applicable",
+      "-3": "Don't Know"
+    },
+    "type": "radio"
+  },
+  "tst_hepc": {
+    "map": {
+      "1": "Yes",
+      "0": "No",
+      "-1": "Refused",
+      "-2": "Not Applicable",
+      "-3": "Don't Know"
+    },
+    "type": "radio"
+  },
+  "tst_hepc_pos": {
+    "map": {
+      "1": "Yes",
+      "0": "No",
+      "-1": "Refused",
+      "-2": "Not Applicable",
+      "-3": "Don't Know"
+    },
+    "type": "radio"
+  },
+  "hepc_trt": {
+    "map": {
+      "1": "Yes",
+      "0": "No",
+      "-1": "Refused",
+      "-2": "Not Applicable",
+      "-3": "Don't Know"
+    },
+    "type": "radio"
+  },
+  "ba10_1": {
+    "map": {
+      "1": "Strongly Disagree",
+      "2": "Disagree",
+      "3": "Somewhat Disagree",
+      "4": "Somewhat Agree",
+      "5": "Agree",
+      "6": "Strongly Agree"
+    },
+    "type": "radio"
+  },
+  "ba10_2": {
+    "map": {
+      "1": "Strongly Disagree",
+      "2": "Disagree",
+      "3": "Somewhat Disagree",
+      "4": "Somewhat Agree",
+      "5": "Agree",
+      "6": "Strongly Agree"
+    },
+    "type": "radio"
+  },
+  "ba10_3": {
+    "map": {
+      "1": "Strongly Disagree",
+      "2": "Disagree",
+      "3": "Somewhat Disagree",
+      "4": "Somewhat Agree",
+      "5": "Agree",
+      "6": "Strongly Agree"
+    },
+    "type": "radio"
+  },
+  "ba10_4": {
+    "map": {
+      "1": "Strongly Disagree",
+      "2": "Disagree",
+      "3": "Somewhat Disagree",
+      "4": "Somewhat Agree",
+      "5": "Agree",
+      "6": "Strongly Agree"
+    },
+    "type": "radio"
+  },
+  "ba10_5": {
+    "map": {
+      "1": "Strongly Disagree",
+      "2": "Disagree",
+      "3": "Somewhat Disagree",
+      "4": "Somewhat Agree",
+      "5": "Agree",
+      "6": "Strongly Agree"
+    },
+    "type": "radio"
+  },
+  "ba10_6": {
+    "map": {
+      "1": "Strongly Disagree",
+      "2": "Disagree",
+      "3": "Somewhat Disagree",
+      "4": "Somewhat Agree",
+      "5": "Agree",
+      "6": "Strongly Agree"
+    },
+    "type": "radio"
+  },
+  "ba10_7": {
+    "map": {
+      "1": "Strongly Disagree",
+      "2": "Disagree",
+      "3": "Somewhat Disagree",
+      "4": "Somewhat Agree",
+      "5": "Agree",
+      "6": "Strongly Agree"
+    },
+    "type": "radio"
+  },
+  "ba10_8": {
+    "map": {
+      "1": "Strongly Disagree",
+      "2": "Disagree",
+      "3": "Somewhat Disagree",
+      "4": "Somewhat Agree",
+      "5": "Agree",
+      "6": "Strongly Agree"
+    },
+    "type": "radio"
+  },
+  "ba10_9": {
+    "map": {
+      "1": "Strongly Disagree",
+      "2": "Disagree",
+      "3": "Somewhat Disagree",
+      "4": "Somewhat Agree",
+      "5": "Agree",
+      "6": "Strongly Agree"
+    },
+    "type": "radio"
+  },
+  "ba10_10": {
+    "map": {
+      "1": "Strongly Disagree",
+      "2": "Disagree",
+      "3": "Somewhat Disagree",
+      "4": "Somewhat Agree",
+      "5": "Agree",
+      "6": "Strongly Agree"
+    },
+    "type": "radio"
+  },
+  "rmp_tran": {
+    "map": {
+      "1": "Very Satisfied",
+      "2": "Satisfied",
+      "3": "Neutral",
+      "4": "Dissatistfied",
+      "5": "Very Dissatisfied",
+      "6": "Unsure"
+    },
+    "type": "radio"
+  },
+  "rmp_hous": {
+    "map": {
+      "1": "Very Satisfied",
+      "2": "Satisfied",
+      "3": "Neutral",
+      "4": "Dissatistfied",
+      "5": "Very Dissatisfied",
+      "6": "Unsure"
+    },
+    "type": "radio"
+  },
+  "rmp_mmgt": {
+    "map": {
+      "1": "Very Satisfied",
+      "2": "Satisfied",
+      "3": "Neutral",
+      "4": "Dissatistfied",
+      "5": "Very Dissatisfied",
+      "6": "Unsure"
+    },
+    "type": "radio"
+  },
+  "rmp_emp": {
+    "map": {
+      "1": "Very Satisfied",
+      "2": "Satisfied",
+      "3": "Neutral",
+      "4": "Dissatistfied",
+      "5": "Very Dissatisfied",
+      "6": "Unsure"
+    },
+    "type": "radio"
+  },
+  "rmp_edu": {
+    "map": {
+      "1": "Very Satisfied",
+      "2": "Satisfied",
+      "3": "Neutral",
+      "4": "Dissatistfied",
+      "5": "Very Dissatisfied",
+      "6": "Unsure"
+    },
+    "type": "radio"
+  },
+  "rmp_soc": {
+    "map": {
+      "1": "Very Satisfied",
+      "2": "Satisfied",
+      "3": "Neutral",
+      "4": "Dissatistfied",
+      "5": "Very Dissatisfied",
+      "6": "Unsure"
+    },
+    "type": "radio"
+  },
+  "rmp_med": {
+    "map": {
+      "1": "Very Satisfied",
+      "2": "Satisfied",
+      "3": "Neutral",
+      "4": "Dissatistfied",
+      "5": "Very Dissatisfied",
+      "6": "Unsure"
+    },
+    "type": "radio"
+  },
+  "rmp_well": {
+    "map": {
+      "1": "Very Satisfied",
+      "2": "Satisfied",
+      "3": "Neutral",
+      "4": "Dissatistfied",
+      "5": "Very Dissatisfied",
+      "6": "Unsure"
+    },
+    "type": "radio"
+  },
+  "rmp_rela": {
+    "map": {
+      "1": "Very Satisfied",
+      "2": "Satisfied",
+      "3": "Neutral",
+      "4": "Dissatistfied",
+      "5": "Very Dissatisfied",
+      "6": "Unsure"
+    },
+    "type": "radio"
+  },
+  "rmp_fin": {
+    "map": {
+      "1": "Very Satisfied",
+      "2": "Satisfied",
+      "3": "Neutral",
+      "4": "Dissatistfied",
+      "5": "Very Dissatisfied",
+      "6": "Unsure"
+    },
+    "type": "radio"
+  },
+  "rmp_cult": {
+    "map": {
+      "1": "Very Satisfied",
+      "2": "Satisfied",
+      "3": "Neutral",
+      "4": "Dissatistfied",
+      "5": "Very Dissatisfied",
+      "6": "Unsure"
+    },
+    "type": "radio"
+  },
+  "rmp_orec": {
+    "map": {
+      "1": "Very Satisfied",
+      "2": "Satisfied",
+      "3": "Neutral",
+      "4": "Dissatistfied",
+      "5": "Very Dissatisfied",
+      "6": "Unsure"
+    },
+    "type": "radio"
+  },
+  "crit_ld": {
+    "map": {
+      "1": "Transportation",
+      "2": "Housing Home Management",
+      "3": "Budget/Money Management",
+      "4": "Employment",
+      "5": "Education/Vocational",
+      "6": "Relationship/Social Support",
+      "7": "Medical/Dental/Vision",
+      "8": "Mental/Physical Wellness",
+      "9": "Relaxation/Recreation",
+      "10": "Financial/Legal",
+      "11": "Spirituality/Mindfulness/Culture",
+      "12": "Overall Recovery from SUD",
+      "-1": "Refused",
+      "-2": "Not Applicable",
+      "-3": "Don't Know"
+    },
+    "type": "checkbox"
+  },
+  "qos": {
+    "map": {
+      "1": "Excellent",
+      "2": "Good",
+      "3": "Fair",
+      "4": "Poor",
+      "-1": "Refused",
+      "-2": "Not Applicable",
+      "-3": "Don't Know"
+    },
+    "type": "radio"
+  },
+  "get_want": {
+    "map": {
+      "1": "No, definitely not",
+      "2": "No, not really",
+      "3": "Yes, generally",
+      "4": "Yes, definitely",
+      "-1": "Refused",
+      "-2": "Not Applicable",
+      "-3": "Don't Know"
+    },
+    "type": "radio"
+  },
+  "met_need": {
+    "map": {
+      "1": "Almost all of my needs have been met",
+      "2": "Most of my needs have been met",
+      "3": "Only a few of my needs have been me",
+      "4": "None of my needs have been met",
+      "-1": "Refused",
+      "-2": "Not Applicable",
+      "-3": "Don't Know"
+    },
+    "type": "radio"
+  },
+  "w_reccom": {
+    "map": {
+      "1": "No, definitely not",
+      "2": "No, I don't think so",
+      "3": "Yes, I think so",
+      "4": "Yes, definitely",
+      "-1": "Refused",
+      "-2": "Not Applicable",
+      "-3": "Don't Know"
+    },
+    "type": "radio"
+  },
+  "satisf": {
+    "map": {
+      "1": "Quite dissatisfied",
+      "2": "Indifferent or mildly dissatisfied",
+      "3": "Mostly satisfied",
+      "4": "Very satisfied",
+      "-1": "Refused",
+      "-2": "Not Applicable",
+      "-3": "Don't Know"
+    },
+    "type": "radio"
+  },
+  "hav_help": {
+    "map": {
+      "1": "Yes, they helped a great deal",
+      "2": "Yes, they helped somewhat",
+      "3": "No, they really didn't help",
+      "4": "No, they seemed to make things worse",
+      "-1": "Refused",
+      "-2": "Not Applicable",
+      "-3": "Don't Know"
+    },
+    "type": "radio"
+  },
+  "ov_satis": {
+    "map": {
+      "1": "Very satisfied",
+      "2": "Mostly satisfied",
+      "3": "Indifferent or mildly dissatisfied",
+      "4": "Quite dissatisfied",
+      "-1": "Refused",
+      "-2": "Not Applicable",
+      "-3": "Don't Know"
+    },
+    "type": "radio"
+  },
+  "d_return": {
+    "map": {
+      "1": "No, definitely not",
+      "2": "No, I don't think so",
+      "3": "Yes, I think so",
+      "4": "Yes, definitely",
+      "-1": "Refused",
+      "-2": "Not Applicable",
+      "-3": "Don't Know"
+    },
+    "type": "radio"
+  },
+  "ot_srv": {
+    "map": {
+      "1": "Yes",
+      "0": "No, I received all the serviced needed",
+      "-1": "Refused",
+      "-2": "Not Applicable",
+      "-3": "Don't Know"
+    },
+    "type": "radio"
+  },
+  "elig1": {
+    "map": {
+      "1": "Yes"
+    },
+    "type": "checkbox"
+  },
+  "elig2": {
+    "map": {
+      "1": "Yes"
+    },
+    "type": "checkbox"
+  },
+  "elig_inc": {
+    "map": {
+      "1": "Yes"
+    },
+    "type": "checkbox"
+  },
+  "elig4": {
+    "map": {
+      "1": "Yes"
+    },
+    "type": "checkbox"
+  },
+  "cutrtmt": {
+    "map": {
+      "1": "Yes",
+      "0": "No",
+      "-1": "Refused",
+      "-2": "Not Applicable",
+      "-3": "Don't Know"
+    },
+    "type": "radio"
+  },
+  "cusobliv": {
+    "map": {
+      "1": "Yes",
+      "0": "No",
+      "-1": "Refused",
+      "-2": "Not Applicable",
+      "-3": "Don't Know"
+    },
+    "type": "radio"
+  },
+  "katr_1st": {
+    "map": {
+      "1": "Yes",
+      "0": "No",
+      "-1": "Refused",
+      "-2": "Not Applicable",
+      "-3": "Don't Know"
+    },
+    "type": "radio"
+  },
+  "plnserv": {
+    "map": {
+      "1": "Peer Coaching or Mentoring {npcm}",
+      "2": "Vocational Services {nvoc}",
+      "3": "Recovery Housing {nrechou}",
+      "4": "Recovery Planning {nrecpln}",
+      "5": "Case Management Services to Specifically Support Recovery {ncsmgmt}",
+      "6": "Alcohol- and Drug-Free Social Activities {nclact}",
+      "7": "Information and Referral {ninforef}",
+      "8": "Other Recovery Support Services {norss}",
+      "9": "Other Peer-to-Peer Recovery Support Services {nop2p}"
+    },
+    "type": "checkbox"
+  },
+  "preppmin": {
+    "map": {
+      "1": "Yes",
+      "0": "No",
+      "-1": "Refused",
+      "-2": "Not Applicable",
+      "-3": "Don't Know"
+    },
+    "type": "radio"
+  },
+  "bel_pop": {
+    "map": {
+      "1": "Veteran",
+      "2": "Recently incarcerated",
+      "3": "Primary caregiver",
+      "4": "Pregnant",
+      "5": "Post-partum",
+      "6": "Currently using Medications for Opioid Use Disorder (MOUD)",
+      "7": "History of felony convictions",
+      "0": "None",
+      "-1": "Refused",
+      "-2": "Not Applicable",
+      "-3": "Don't Know"
+    },
+    "type": "checkbox"
+  },
+  "disch_st": {
+    "map": {
+      "1": "Completion/Graduate",
+      "2": "Termination"
+    },
+    "type": "radio"
+  },
+  "dterm_te": {
+    "map": {
+      "1": "Left on own against staff advice with satisfactory progress",
+      "2": "Left on own against staff advice without satisfactory progress",
+      "3": "Involuntarily discharged due to non-participation",
+      "4": "Involuntarily discharged due to violation of rules",
+      "5": "Referred to another program or other services with satisfactory progress",
+      "6": "Referred to another program or other services with unsatisfactory progress",
+      "7": "Incarcerated due to offense committed while in treatment/recovery with satisfactory progress",
+      "8": "Incarcerated due to offense committed while in treatment/recovery with unsatisfactory progress",
+      "9": "Incarcerated due to old warrant or charged from before entering treatment/recovery with satisfactory progress",
+      "10": "Incarcerated due to old warrant or charged from before entering treatment/recovery with unsatisfactory progress",
+      "11": "Transferred to another facility for health reasons",
+      "12": "Death",
+      "50": "Other (specify)"
+    },
+    "type": "radio"
+  },
+  "prov_nal": {
+    "map": {
+      "1": "Naloxone",
+      "2": "Fentanyl Test Strips",
+      "3": "Both Naloxone and Fentanyl Test Strips",
+      "4": "Neither"
+    },
+    "type": "radio"
+  },
+  "co19_vac": {
+    "map": {
+      "1": "Yes",
+      "2": "No, partially vaccinated with plans to receive the subsequent vaccination on time",
+      "3": "No, partially vaccinated with no plan to receive the subsequent vaccination",
+      "4": "No, client refused vaccination",
+      "5": "Refused to answer"
+    },
+    "type": "radio"
+  },
+  "dplnserv": {
+    "map": {
+      "1": "Peer Coaching or Mentoring {ndpcm}",
+      "2": "Vocational Services {ndvoc}",
+      "3": "Recovery Housing {ndrechou}",
+      "4": "Recovery Planning {ndrecpln}",
+      "5": "Case Management Services to Specifically Support Recovery {ndcsmgmt}",
+      "6": "Alcohol- and Drug-Free Social Activities {ndclact}",
+      "7": "Information and Referral {ndinforef}",
+      "8": "Other Recovery Support Services {ndorss}",
+      "9": "Other Peer-to-Peer Recovery Support Services {ndop2p}"
+    },
+    "type": "checkbox"
+  },
+  "dopimeds": {
+    "map": {
+      "1": "Methadone",
+      "2": "Buprenorphine",
+      "3": "Naltrexone",
+      "4": "Extended-release Naltrexone",
+      "5": "Client did not receive an FDA-approved medication for a diagnosed opioid use disorder"
+    },
+    "type": "checkbox"
+  },
+  "d_almeds": {
+    "map": {
+      "1": "Naltrexone",
+      "2": "Extended-release Naltrexone",
+      "3": "Disulfiram",
+      "4": "Acamprosate",
+      "5": "Client did not receive an FDA-approved medication for an alcohol use disorder"
+    },
+    "type": "checkbox"
+  },
+  "dstmeds": {
+    "map": {
+      "1": "Contingency Management",
+      "2": "Community Reinforcement",
+      "3": "Cognitive Behavioral Therapy",
+      "4": "Other Treatment Approach",
+      "5": "Client did not receive any intervention for a stimulant use disorder"
+    },
+    "type": "checkbox"
+  },
+  "dtomeds": {
+    "map": {
+      "1": "Nicotine Replacement",
+      "2": "Bupropion",
+      "3": "Varenicline",
+      "4": "Client did not receive an FDA-approved medication for a tobacco use disorder."
+    },
+    "type": "checkbox"
+  },
+  "whynr": {
+    "map": {
+      "1": "Return to use",
+      "2": "Hospitalization",
+      "3": "Incarceration",
+      "4": "Return to treatment",
+      "5": "Exhausted lines of communication"
+    },
+    "type": "radio"
+  },
+  "foupst": {
+    "map": {
+      "1": "Deceased at time of due date",
+      "2": "Completed interview within specified window",
+      "3": "Completed interview outside of specified window",
+      "4": "Located, but refused, unspecified",
+      "5": "Located, but unable to gain institutional access",
+      "6": "Located, but otherwise unable to gain access",
+      "7": "Located, but withdrawn from project",
+      "8": "Unable to locate, moved",
+      "50": "Unable to locate, other (specify)"
+    },
+    "type": "radio"
+  },
+  "relinked": {
+    "map": {
+      "1": "Yes",
+      "0": "No",
+      "-1": "Refused",
+      "-2": "Not Applicable",
+      "-3": "Don't Know"
+    },
+    "type": "radio"
+  },
+  "lo2death": {
+    "map": {
+      "1": "Yes",
+      "0": "No",
+      "-1": "Refused",
+      "-2": "Not Applicable",
+      "-3": "Don't Know"
+    },
+    "type": "radio"
+  },
+  "deovd": {
+    "map": {
+      "1": "Yes",
+      "0": "No",
+      "-1": "Refused",
+      "-2": "Not Applicable",
+      "-3": "Don't Know"
+    },
+    "type": "radio"
+  },
+  "itype_gpra": {
+    "map": {
+      "1": "Intake",
+      "2": "Follow-up",
+      "3": "Discharge"
+    },
+    "type": "radio"
+  },
+  "birth_moyr_ref_gpra": {
+    "map": {
+      "-1": "Refused"
+    },
+    "type": "checkbox"
+  },
+  "gender_gpra": {
+    "map": {
+      "1": "Male",
+      "2": "Female",
+      "3": "Transgender (Male to Female)",
+      "4": "Transgender (Female to Male)",
+      "5": "Gender Non-Conforming",
+      "50": "Other",
+      "-1": "REFUSED"
+    },
+    "type": "radio"
+  },
+  "hisp_gpra": {
+    "map": {
+      "1": "Yes",
+      "0": "No",
+      "-1": "Refused"
+    },
+    "type": "radio"
+  },
+  "eth_gpra": {
+    "map": {
+      "1": "Central American",
+      "2": "Cuban",
+      "3": "Dominican",
+      "4": "Mexican",
+      "5": "Puerto Rican",
+      "6": "South American",
+      "50": "Other {eth_oth_gpra}",
+      "-1": "Refused"
+    },
+    "type": "checkbox"
+  },
+  "race_gpra": {
+    "map": {
+      "1": "Black/African American",
+      "2": "White",
+      "3": "American Indian",
+      "4": "Alaska Native",
+      "5": "Asian Indian",
+      "6": "Chinese",
+      "7": "Filipino",
+      "8": "Japanese",
+      "9": "Korean",
+      "10": "Vietnamese",
+      "11": "Other Asian",
+      "12": "Native Hawaiian",
+      "13": "Guamanian/Chamorro",
+      "14": "Samoan",
+      "15": "Other Pacific Islander",
+      "50": "Other",
+      "-1": "Refused"
+    },
+    "type": "checkbox"
+  },
+  "olang_gpra": {
+    "map": {
+      "1": "Yes",
+      "0": "No",
+      "-1": "Refused"
+    },
+    "type": "radio"
+  },
+  "sexu_gpra": {
+    "map": {
+      "1": "Straight",
+      "2": "Homosexual",
+      "3": "Bisexual",
+      "4": "Asexual",
+      "5": "Queer, Pansexual/Questioning",
+      "50": "Other {sexu_oth_gpra}",
+      "-1": "Refused"
+    },
+    "type": "checkbox"
+  },
+  "rel_st_gpra": {
+    "map": {
+      "1": "Married",
+      "2": "Single",
+      "3": "Divorced",
+      "4": "Separated",
+      "5": "Widowed",
+      "6": "In a relationship",
+      "7": "In multiple relationships",
+      "-1": "Refused"
+    },
+    "type": "radio"
+  },
+  "preg_gpra": {
+    "map": {
+      "1": "Yes",
+      "0": "No",
+      "2": "Do not know",
+      "-1": "Refused"
+    },
+    "type": "radio"
+  },
+  "children_gpra": {
+    "map": {
+      "1": "Yes",
+      "0": "No",
+      "-1": "Refused"
+    },
+    "type": "radio"
+  },
+  "n_min_ref_gpra": {
+    "map": {
+      "-1": "Refused"
+    },
+    "type": "checkbox"
+  },
+  "min_els_gpra": {
+    "map": {
+      "1": "Yes",
+      "0": "No",
+      "2": "Do not know",
+      "-1": "Refused"
+    },
+    "type": "radio"
+  },
+  "min_ru_gpra": {
+    "map": {
+      "1": "Yes",
+      "0": "No",
+      "2": "Do not know",
+      "-1": "Refused"
+    },
+    "type": "radio"
+  },
+  "serv_gpra": {
+    "map": {
+      "0": "No",
+      "1": "Yes, in the Armed Forces",
+      "2": "Yes, in the Reserves",
+      "3": "Yes, in the National Guard",
+      "4": "Yes, other uniformed services [includes NOAA, USPHS]"
+    },
+    "type": "radio"
+  },
+  "tts_gpra": {
+    "map": {
+      "1": "Half an hour or less",
+      "2": "Between half an hour and one hour",
+      "3": "Between one hour and one and a half hours",
+      "4": "Between one and a half hours and two hours",
+      "5": "Two hours or more",
+      "-1": "Refused"
+    },
+    "type": "radio"
+  },
+  "almeds_gpra": {
+    "map": {
+      "1": "Naltrexone {naltrexone_days_30d_alc}",
+      "2": "Extended-release Naltrexone {ernaltrexone_days_30d_alc}",
+      "3": "Disulfiram {disulfiram_days_30d_alc}",
+      "4": "Acamprosate {acamprosate_days_30d_alc}",
+      "5": "Did NOT receive an FDA-APPROVED medication for diagnosed alcohol use disorder",
+      "6": "Client does not report such a diagnosis"
+    },
+    "type": "checkbox"
+  },
+  "opmeds_gpra": {
+    "map": {
+      "1": "Methadone {methadone_days_30d_opi}",
+      "2": "Buprenorphine {buprenorphine_days_30d_opi}",
+      "3": "Naltrexone {naltrexone_days_30d_opi}",
+      "4": "Extended-release Naltrexone {ernaltrexone_days_30d_opi}",
+      "5": "Did NOT receive an FDA-APPROVED medication for diagnosed opioid use disorder",
+      "6": "Client does not report such a diagnosis"
+    },
+    "type": "checkbox"
+  },
+  "stimulant_interventions": {
+    "map": {
+      "1": "Contingency Management {cont_mgmt_days_30d_stim}",
+      "2": "Community Reinforcement {comm_reinf_days_30d_stim}",
+      "3": "Cognitive Behavioral Therapy {cbt_days_30d_stim}",
+      "4": "Other evidence-based intervention {oth_interv_days_30d_stim}",
+      "5": "Did NOT receive an FDA-APPROVED medication for diagnosed SUD",
+      "6": "Client does not report such a diagnosis"
+    },
+    "type": "checkbox"
+  },
+  "tobacco_medications": {
+    "map": {
+      "1": "Nicotine Replacement {nic_replace_days_30d_tob}",
+      "2": "Bupropion {bupropion_days_30d_tob}",
+      "3": "Varenicline {varenicline_days_30d_tob}",
+      "4": "Did NOT receive an FDA-APPROVED medication for diagnosed tobacco use disorder",
+      "5": "Client does not report such a diagnosis"
+    },
+    "type": "checkbox"
+  },
+  "overdose_30d": {
+    "map": {
+      "1": "Yes",
+      "0": "No",
+      "-1": "REFUSED"
+    },
+    "type": "radio"
+  },
+  "overdose_interventions_30d": {
+    "map": {
+      "1": "Naloxone (Narcan)",
+      "2": "Care from Primary Doctor",
+      "3": "Supervision by someone else",
+      "4": "Care in an ER",
+      "5": "Admission to hospital",
+      "6": "Other {overdose_intervention_other}",
+      "-1": "REFUSED"
+    },
+    "type": "checkbox"
+  },
+  "inp_outp_treatment_life": {
+    "map": {
+      "1": "One time",
+      "2": "Two times",
+      "3": "Three times",
+      "4": "Four times",
+      "5": "Five times",
+      "6": "Six or more times",
+      "0": "Never",
+      "-1": "REFUSED"
+    },
+    "type": "dropdown"
+  },
+  "last_inp_outp_treatment": {
+    "map": {
+      "1": "Less than 6 months ago",
+      "2": "Between 6 months and 1 year ago",
+      "3": "One to two years ago",
+      "4": "Two to three years ago",
+      "5": "Three to four years ago",
+      "6": "Five or more years ago",
+      "-1": "Refused"
+    },
+    "type": "dropdown"
+  },
+  "rcvd_mh_dia": {
+    "map": {
+      "1": "Yes",
+      "0": "No",
+      "-1": "REFUSED"
+    },
+    "type": "radio"
+  },
+  "planned_modalities": {
+    "map": {
+      "1": "Case Management",
+      "2": "Intensive Outpatient Treatment",
+      "3": "Inpatient/Hospital (Other than withdrawal management)",
+      "4": "Outpatient Therapy",
+      "5": "Outreach",
+      "6": "Medication {planned_medications}",
+      "7": "Residential/Rehabilitation",
+      "8": "Withdrawal Management {planned_withdrawal_mgmt}",
+      "9": "After Care",
+      "10": "Recovery Support",
+      "11": "Other {other_planned_modalities}"
+    },
+    "type": "checkbox"
+  },
+  "planned_medications": {
+    "map": {
+      "1": "Methadone",
+      "2": "Buprenorphine",
+      "3": "Naltrexone - Short Acting",
+      "4": "Naltrexone - Long Acting",
+      "5": "Disulfiram",
+      "6": "Acamprosate",
+      "7": "Nicotine Replacement",
+      "8": "Bupropion",
+      "9": "Varenicline"
+    },
+    "type": "checkbox"
+  },
+  "planned_withdrawal_mgmt": {
+    "map": {
+      "1": "Hospital Inpatient",
+      "2": "Free Standing Residential",
+      "3": "Ambulatory Detoxification"
+    },
+    "type": "radio"
+  },
+  "planned_trtmt_serv": {
+    "map": {
+      "1": "Screening",
+      "2": "Brief Intervention",
+      "3": "Brief Treatment",
+      "4": "Referral to Treatment",
+      "5": "Assessment",
+      "6": "Treatment Planning",
+      "7": "Recovery Planning",
+      "8": "Individual Counseling",
+      "9": "Group Counseling",
+      "10": "Contingency Management",
+      "11": "Community Reinforcement",
+      "12": "Cognitive Behavioral Therapy",
+      "13": "Family/Marriage Counseling",
+      "14": "Co-Occurring Treatment Services",
+      "15": "Pharmacological Interventions",
+      "16": "HIV/AIDS Counseling",
+      "17": "Cultural Interventions/Activities",
+      "18": "Other Clinical Service: {other_planned_trtmt_serv}"
+    },
+    "type": "checkbox"
+  },
+  "planned_case_mgmt_serv": {
+    "map": {
+      "1": "Family Services (e.g. Marriage Education, Parenting, Child Development Services)",
+      "2": "Child Care",
+      "3": "Employment Service {planned_employ_serv}",
+      "4": "Individual Services Coordination",
+      "5": "Transportation",
+      "6": "HIV/AIDS Services {planned_hiv_aids_serv}",
+      "7": "Transitional Drug-Free Housing Services",
+      "8": "Housing Support",
+      "9": "Health Insurance Enrollment",
+      "10": "Other Case Management Services {planned_oth_case_mgmt_serv}"
+    },
+    "type": "checkbox"
+  },
+  "planned_employ_serv": {
+    "map": {
+      "1": "Pre-Employment",
+      "2": "Employment Coaching"
+    },
+    "type": "checkbox"
+  },
+  "planned_hiv_aids_serv": {
+    "map": {
+      "1": "If HIV Neg, Pre-Exposure Prophylaxis",
+      "2": "If HIV Neg, Post-Exposure Prophylaxis",
+      "3": "If HIV Positive, HIV Treatment"
+    },
+    "type": "checkbox"
+  },
+  "planned_med_serv": {
+    "map": {
+      "1": "Medical Care",
+      "2": "Alcohol/Drug Testing",
+      "3": "OB/GYN Services",
+      "4": "HIV/AIDS Medical Support and Testing",
+      "5": "Dental Care",
+      "6": "Viral Hepatitis Medical Support and Testing",
+      "7": "Other STI Support and Testing",
+      "8": "Other Medical Services {planned_oth_med_serv}"
+    },
+    "type": "checkbox"
+  },
+  "planned_aft_care_serv": {
+    "map": {
+      "1": "Continuing Care",
+      "2": "Relapse Prevention",
+      "3": "Recovery Coaching",
+      "4": "Self-Help and Mutual Support Groups",
+      "5": "Spiritual Support",
+      "6": "Other After Care Services {planned_oth_aft_care_serv}"
+    },
+    "type": "checkbox"
+  },
+  "planned_edu_serv": {
+    "map": {
+      "1": "Substance Use Education",
+      "2": "HIV/AIDS Education",
+      "3": "Naloxone Training",
+      "4": "Fentanyl Test Strip Testing",
+      "5": "Viral Hepatitis Education",
+      "6": "Other STI Education Services",
+      "7": "Other Education Services {planned_other_edu_serv}"
+    },
+    "type": "checkbox"
+  },
+  "planned_rss": {
+    "map": {
+      "1": "Peer Coaching or Mentoring",
+      "2": "Vocational Services",
+      "3": "Recovery Housing",
+      "4": "Recovery Planning",
+      "5": "Case Management Services to Specifically Support Recovery",
+      "6": "Alcohol- and Drug-Free Social Activities",
+      "7": "Information and Referral",
+      "8": "Other Recovery Support Services {planned_oth_rss}",
+      "9": "Other Peer-to-Peer Recovery Support Services {planned_oth_p2p_rss}"
+    },
+    "type": "checkbox"
+  },
+  "living_loc_30d": {
+    "map": {
+      "1": "Shelter",
+      "2": "Street/Outdoors",
+      "3": "Institution (Hospital, Jail, Nursing Home)",
+      "4": "Own/Rent",
+      "5": "Someone else's home, room, trailer, or house (include couch surfing)",
+      "6": "Dormitory/College Residence",
+      "7": "Halfway House or Transitional Living",
+      "8": "Residential Treatment",
+      "9": "Recovery Residence/Sober Living",
+      "50": "Other Housed",
+      "-1": "REFUSED"
+    },
+    "type": "dropdown"
+  },
+  "live_with_regular_user": {
+    "map": {
+      "1": "Yes",
+      "0": "No",
+      "2": "No , Lives Alone",
+      "-1": "REFUSED"
+    },
+    "type": "dropdown"
+  },
+  "enr_school_job_train": {
+    "map": {
+      "0": "Not Enrolled",
+      "1": "Enrolled Full Time",
+      "2": "Enrolled Part Time",
+      "-1": "REFUSED"
+    },
+    "type": "dropdown"
+  },
+  "highest_edu": {
+    "map": {
+      "1": "Less than 12th Grade",
+      "2": "12th Grade/High School Diploma/Equivalent",
+      "3": "Vocational/Technical Diploma",
+      "4": "Some College or University",
+      "5": "Bachelor's Degree",
+      "6": "Graduate Work/Graduate Degree",
+      "50": "Other",
+      "-1": "REFUSED"
+    },
+    "type": "dropdown"
+  },
+  "is_emp": {
+    "map": {
+      "1": "Employed Full Time (35+ hours per week, or would be if not for leave or excused absence)",
+      "2": "Employed Part Time",
+      "3": "Unemployed but looking for work",
+      "4": "Not employed and not looking for work",
+      "5": "Not working due to a disability",
+      "6": "Retired not working",
+      "50": "Not working other",
+      "-1": "REFUSED"
+    },
+    "type": "dropdown"
+  },
+  "enough_money_live_expenses": {
+    "map": {
+      "1": "Food",
+      "2": "Clothing",
+      "3": "Transportation",
+      "4": "Rent/Housing",
+      "5": "Utilities",
+      "6": "Telephone Service",
+      "7": "Childcare",
+      "8": "Health Insurance",
+      "-1": "REFUSED"
+    },
+    "type": "checkbox"
+  },
+  "ann_inc": {
+    "map": {
+      "1": "$0 to $9,999",
+      "2": "$10,000 to $14,999",
+      "3": "$15,000 to $19,999",
+      "4": "$20,000 to $34,999",
+      "5": "$35,000 to $49,999",
+      "6": "$50,000 to $74,999",
+      "7": "$75,000 to $99,999",
+      "8": "$100,000 to $199,999",
+      "9": "$200,000 or more",
+      "-1": "REFUSED"
+    },
+    "type": "dropdown"
+  },
+  "t_arr_r_gpra": {
+    "map": {
+      "1": "Refused"
+    },
+    "type": "checkbox"
+  },
+  "awaiting_charge_trial_sent": {
+    "map": {
+      "1": "Yes",
+      "0": "No",
+      "-1": "REFUSED"
+    },
+    "type": "radio"
+  },
+  "parole_prob_pretrial_super": {
+    "map": {
+      "1": "Probation",
+      "2": "Parole",
+      "3": "Intensive Pretrial Supervision",
+      "0": "No",
+      "-1": "REFUSED"
+    },
+    "type": "dropdown"
+  },
+  "drug_court_deffered_pros": {
+    "map": {
+      "1": "Drug Court Program",
+      "2": "Deferred Prosecution Agreement",
+      "0": "No, Neither of these",
+      "-1": "REFUSED"
+    },
+    "type": "dropdown"
+  },
+  "quality_of_life_rating": {
+    "map": {
+      "1": "Very Poor",
+      "2": "Poor",
+      "3": "Neither Poor nor Good",
+      "4": "Good",
+      "5": "Very Good",
+      "-1": "REFUSED"
+    },
+    "type": "dropdown"
+  },
+  "days_ser_depress_ref": {
+    "map": {
+      "1": "Refused"
+    },
+    "type": "checkbox"
+  },
+  "days_ser_anx_ref": {
+    "map": {
+      "1": "Refused"
+    },
+    "type": "checkbox"
+  },
+  "days_hallucinations_ref": {
+    "map": {
+      "1": "Refused"
+    },
+    "type": "checkbox"
+  },
+  "days_trb_und_rem_ref": {
+    "map": {
+      "1": "Refused"
+    },
+    "type": "checkbox"
+  },
+  "days_trb_viol_beh_ref": {
+    "map": {
+      "1": "Refused"
+    },
+    "type": "checkbox"
+  },
+  "days_attempt_suicide_ref": {
+    "map": {
+      "1": "Refused"
+    },
+    "type": "checkbox"
+  },
+  "days_pr_mh_r": {
+    "map": {
+      "1": "Refused"
+    },
+    "type": "checkbox"
+  },
+  "psych_emote_bothered": {
+    "map": {
+      "0": "Not at all",
+      "1": "Slightly",
+      "2": "Moderately",
+      "3": "Considerably",
+      "4": "Extremely",
+      "5": "No reported mental health complication",
+      "-1": "Refused"
+    },
+    "type": "dropdown"
+  },
+  "medical_care_loc": {
+    "map": {
+      "1": "Primary Care Provider",
+      "2": "Urgent Care",
+      "3": "Emergency Department",
+      "4": "Specialist Doctor",
+      "5": "No care was sought",
+      "6": "Other {medical_care_loc_oth}"
+    },
+    "type": "checkbox"
+  },
+  "med_insance": {
+    "map": {
+      "1": "Yes",
+      "0": "No",
+      "-1": "REFUSED"
+    },
+    "type": "radio"
+  },
+  "insurance_type": {
+    "map": {
+      "1": "Medicare",
+      "2": "Medicaid",
+      "3": "Private Insurance or Employer Provided",
+      "4": "Tricare or other military health care",
+      "5": "An assistance program (example: medication assistance program)",
+      "50": "Any other type of health insurance or coverage plan {insurance_type_oth}",
+      "-1": "REFUSED"
+    },
+    "type": "checkbox"
+  },
+  "attend_mutual_supp_grp": {
+    "map": {
+      "1": "Yes",
+      "0": "No",
+      "-1": "Refused"
+    },
+    "type": "dropdown"
+  },
+  "fam_friends_supportive": {
+    "map": {
+      "1": "Yes",
+      "0": "No",
+      "-1": "REFUSED"
+    },
+    "type": "radio"
+  },
+  "per_rel_satisfaction": {
+    "map": {
+      "1": "Very Dissatisfied",
+      "2": "Dissatisfied",
+      "3": "Neither Satisfied or Dissatisfied",
+      "4": "Satisfied",
+      "5": "Very Satisfied",
+      "-1": "REFUSED"
+    },
+    "type": "dropdown"
+  },
+  "need_change_social": {
+    "map": {
+      "1": "Yes",
+      "0": "No",
+      "-1": "REFUSED"
+    },
+    "type": "radio"
+  },
+  "foupst_gpra": {
+    "map": {
+      "01": "01=Deceased at time of due date",
+      "11": "11=Completed interview within specified window",
+      "12": "12=Completed interview outside of specified window",
+      "21": "21=Located but refused, unspecified",
+      "22": "22=Located, but unable to gain institutional access",
+      "23": "23=Located, but otherwise unable to gain access",
+      "24": "24=Located, but withdrawn from project",
+      "31": "31=Unable to locate, moved",
+      "32": "32=Unable to locate, other (specify)"
+    },
+    "type": "dropdown"
+  },
+  "disch_st_gpra": {
+    "map": {
+      "01": "01=Completion/Graduate",
+      "02": "02=Termination"
+    },
+    "type": "dropdown"
+  },
+  "termination_reason": {
+    "map": {
+      "1": "Left on own against staff advice with satisfactory progress",
+      "2": "Left on own against staff advice without satisfactory progress",
+      "3": "Involuntarily discharged due to non-participation",
+      "4": "Involuntarily discharged due to violation of rules",
+      "5": "Referred to another program or other services with satisfactory progress",
+      "6": "Referred to another program or other services with unsatisfactory progress",
+      "7": "Incarcerated due to offense committed while in treatment/recovery with satisfactory progress",
+      "8": "Incarcerated due to offense committed while in treatment/recovery with unsatisfactory progress",
+      "9": "Incarcerated due to old warrant or charged from before entering treatment/recovery with satisfactory progress",
+      "10": "Incarcerated due to old warrant or charged from before entering treatment/recovery with unsatisfactory progress",
+      "11": "Transferred to another facility for health reasons",
+      "12": "Death",
+      "13": "Other"
+    },
+    "type": "dropdown"
+  },
+  "prov_nalox_fent_strips": {
+    "map": {
+      "1": "Naloxone",
+      "2": "Fentanyl Test Strips",
+      "3": "Both Naloxone and Fentanyl Test Strips",
+      "4": "Neither"
+    },
+    "type": "radio"
+  },
+  "covid_vacc": {
+    "map": {
+      "1": "Yes",
+      "2": "No, partially vaccinated with plans to receive subsequent vaccination on time",
+      "3": "No, partially vaccinated with no plan to receive the subsequent vaccination",
+      "4": "No, client refused vaccination",
+      "-1": "Refused to answer"
+    },
+    "type": "dropdown"
+  },
+  "planned_modalities_2": {
+    "map": {
+      "1": "Case Management",
+      "2": "Intensive Outpatient Treatment",
+      "3": "Inpatient/Hospital (Other than withdrawal management)",
+      "4": "Outpatient Therapy",
+      "5": "Outreach",
+      "6": "Medication {planned_medications_2}",
+      "7": "Residential/Rehabilitation",
+      "8": "Withdrawal Management {planned_withdrawal_mgmt_2}",
+      "9": "After Care",
+      "10": "Recovery Support",
+      "11": "Other {other_planned_modalities_2}"
+    },
+    "type": "checkbox"
+  },
+  "planned_medications_2": {
+    "map": {
+      "1": "Methadone",
+      "2": "Buprenorphine",
+      "3": "Naltrexone - Short Acting",
+      "4": "Naltrexone - Long Acting",
+      "5": "Disulfiram",
+      "6": "Acamprosate",
+      "7": "Nicotine Replacement",
+      "8": "Bupropion",
+      "9": "Varenicline"
+    },
+    "type": "checkbox"
+  },
+  "planned_withdrawal_mgmt_2": {
+    "map": {
+      "1": "Hospital Inpatient",
+      "2": "Free Standing Residential",
+      "3": "Ambulatory Detoxification"
+    },
+    "type": "radio"
+  },
+  "planned_trtmt_serv_2": {
+    "map": {
+      "1": "Screening",
+      "2": "Brief Intervention",
+      "3": "Brief Treatment",
+      "4": "Referral to Treatment",
+      "5": "Assessment",
+      "6": "Treatment Planning",
+      "7": "Recovery Planning",
+      "8": "Individual Counseling",
+      "9": "Group Counseling",
+      "10": "Contingency Management",
+      "11": "Community Reinforcement",
+      "12": "Cognitive Behavioral Therapy",
+      "13": "Family/Marriage Counseling",
+      "14": "Co-Occurring Treatment Services",
+      "15": "Pharmacological Interventions",
+      "16": "HIV/AIDS Counseling",
+      "17": "Cultural Interventions/Activities",
+      "18": "Other Clinical Service: {other_planned_trtmt_serv_2}"
+    },
+    "type": "checkbox"
+  },
+  "planned_case_mgmt_serv_2": {
+    "map": {
+      "1": "Family Services (e.g. Marriage Education, Parenting, Child Development Services)",
+      "2": "Child Care",
+      "3": "Employment Service {planned_employ_serv_2}",
+      "4": "Individual Services Coordination",
+      "5": "Transportation",
+      "6": "HIV/AIDS Services {planned_hiv_aids_serv_2}",
+      "7": "Transitional Drug-Free Housing Services",
+      "8": "Housing Support",
+      "9": "Health Insurance Enrollment",
+      "10": "Other Case Management Services {planned_oth_case_mgmt_serv_2}"
+    },
+    "type": "checkbox"
+  },
+  "planned_employ_serv_2": {
+    "map": {
+      "1": "Pre-Employment",
+      "2": "Employment Coaching"
+    },
+    "type": "checkbox"
+  },
+  "planned_hiv_aids_serv_2": {
+    "map": {
+      "1": "If HIV Neg, Pre-Exposure Prophylaxis",
+      "2": "If HIV Neg, Post-Exposure Prophylaxis",
+      "3": "If HIV Positive, HIV Treatment"
+    },
+    "type": "checkbox"
+  },
+  "planned_med_serv_2": {
+    "map": {
+      "1": "Medical Care",
+      "2": "Alcohol/Drug Testing",
+      "3": "OB/GYN Services",
+      "4": "HIV/AIDS Medical Support and Testing",
+      "5": "Dental Care",
+      "6": "Viral Hepatitis Medical Support and Testing",
+      "7": "Other STI Support and Testing",
+      "8": "Other Medical Services {planned_oth_med_serv_2}"
+    },
+    "type": "checkbox"
+  },
+  "planned_aft_care_serv_2": {
+    "map": {
+      "1": "Continuing Care",
+      "2": "Relapse Prevention",
+      "3": "Recovery Coaching",
+      "4": "Self-Help and Mutual Support Groups",
+      "5": "Spiritual Support",
+      "6": "Other After Care Services {planned_oth_aft_care_serv_2}"
+    },
+    "type": "checkbox"
+  },
+  "planned_edu_serv_2": {
+    "map": {
+      "1": "Substance Use Education",
+      "2": "HIV/AIDS Education",
+      "3": "Naloxone Training",
+      "4": "Fentanyl Test Strip Testing",
+      "5": "Viral Hepatitis Education",
+      "6": "Other STI Education Services",
+      "7": "Other Education Services {planned_other_edu_serv_2}"
+    },
+    "type": "checkbox"
+  },
+  "planned_rss_2": {
+    "map": {
+      "1": "Peer Coaching or Mentoring",
+      "2": "Vocational Services",
+      "3": "Recovery Housing",
+      "4": "Recovery Planning",
+      "5": "Case Management Services to Specifically Support Recovery",
+      "6": "Alcohol- and Drug-Free Social Activities",
+      "7": "Information and Referral",
+      "8": "Other Recovery Support Services {planned_oth_rss_2}",
+      "9": "Other Peer-to-Peer Recovery Support Services {planned_oth_p2p_rss_2}"
+    },
+    "type": "checkbox"
+  },
+  "dopimeds_gpra": {
+    "map": {
+      "1": "Methadone",
+      "2": "Buprenorphine",
+      "3": "Naltrexone",
+      "4": "Extended-release Naltrexone",
+      "5": "Client did not receive an FDA-approved medication for diagnosed opioid use disorder"
+    },
+    "type": "checkbox"
+  },
+  "d_almeds_gpra": {
+    "map": {
+      "1": "Naltrexone",
+      "2": "Extended-release Naltrexone",
+      "3": "Disulfiram",
+      "4": "Acamprosate",
+      "5": "Client did not receive an FDA-approved medication for an alcohol use disorder"
+    },
+    "type": "checkbox"
+  },
+  "dstmeds_gpra": {
+    "map": {
+      "1": "Contingency Management",
+      "2": "Community Reinforcement",
+      "3": "Cognitive Behavioral Therapy",
+      "4": "Other Treatment Approach",
+      "5": "Client did not receive any intervention for stimulant use disorder"
+    },
+    "type": "checkbox"
+  },
+  "dtomeds_gpra": {
+    "map": {
+      "1": "Nicotine Replacement",
+      "2": "Bupropion",
+      "3": "Varenicline",
+      "4": "Client did not receive an FDA-approved medication for a tobacco use disorder."
+    },
+    "type": "checkbox"
+  },
+  "emp_ch": {
+    "map": {
+      "1": "Employed Full Time (35+ hours per week, or would be if not for leave or excused absence)",
+      "2": "Employed Part Time",
+      "3": "Unemployed but looking for work",
+      "4": "Not employed not looking for work",
+      "5": "Not working due to a disability",
+      "6": "Retired not working",
+      "50": "Not working other (specify)",
+      "-1": "Refused"
+    },
+    "type": "radio"
+  },
+  "sobli_ch": {
+    "map": {
+      "1": "Yes",
+      "0": "No",
+      "2": "Client was not previously in a sober living residence",
+      "-1": "Refused",
+      "-2": "Not Applicable",
+      "-3": "Don't Know"
+    },
+    "type": "radio"
+  },
+  "cmcont_ch": {
+    "map": {
+      "1": "Yes",
+      "0": "No",
+      "-1": "Refused",
+      "-2": "Not Applicable",
+      "-3": "Don't Know"
+    },
+    "type": "radio"
+  },
+  "ovd_ch": {
+    "map": {
+      "1": "Yes",
+      "0": "No",
+      "-1": "Refused"
+    },
+    "type": "radio"
+  },
+  "ovint_ch": {
+    "map": {
+      "1": "Naloxone (Narcan)",
+      "2": "Care from Primary Doctor",
+      "3": "Supervision by someone else",
+      "4": "Care in an ER",
+      "5": "Admission to hospital",
+      "50": "Other {ovint_o}",
+      "-1": "Refused"
+    },
+    "type": "checkbox"
+  },
+  "hmov_ch": {
+    "map": {
+      "1": "Single incident",
+      "2": "Multiple incidences",
+      "-1": "Refused",
+      "-2": "Not Applicable",
+      "-3": "Don't Know"
+    },
+    "type": "radio"
+  },
+  "atmsg_ch": {
+    "map": {
+      "1": "Yes",
+      "0": "No",
+      "-1": "Refused"
+    },
+    "type": "radio"
+  },
+  "dcoord": {
+    "map": {
+      "dmhu241": "Donna Hurst",
+      "rcbr241": "Rachel Bradford",
+      "ssgr233": "Samantha Grothaus",
+      "tdsm222": "Taylor Smith",
+      "cjgill2": "Candace Brancato"
+    },
+    "type": "dropdown"
+  },
+  "comp_status": {
+    "map": {
+      "1": "Completed Intake",
+      "2": "Completed Discharge",
+      "3": "Completed 3mo Post Discharge",
+      "4": "Completed 12mo Post Intake",
+      "10": "Terminated"
+    },
+    "type": "dropdown"
+  },
+  "msi": {
+    "map": {
+      "0": "0",
+      "1": "1",
+      "2": "2",
+      "3": "3",
+      "4": "4",
+      "5": "5",
+      "6": "6",
+      "7": "7"
+    },
+    "type": "dropdown"
+  },
+  "msi_grace": {
+    "map": {
+      "0": "0",
+      "1": "1",
+      "2": "2",
+      "3": "3",
+      "4": "4",
+      "5": "5",
+      "6": "6",
+      "7": "7"
+    },
+    "type": "dropdown"
+  },
+  "chktot": {
+    "map": {
+      "0": "0",
+      "1": "1",
+      "2": "2",
+      "3": "3",
+      "4": "4",
+      "5": "5",
+      "6": "6",
+      "7": "7"
+    },
+    "type": "dropdown"
+  },
+  "misschk": {
+    "map": {
+      "0": "0",
+      "1": "1",
+      "2": "2",
+      "3": "3",
+      "4": "4",
+      "5": "5",
+      "6": "6",
+      "7": "7"
+    },
+    "type": "dropdown"
+  },
+  "serv_reg": {
+    "map": {
+      "0": "Unknown",
+      "1": "Eastern Kentucky",
+      "2": "Louisville Area",
+      "3": "Northern Kentucky"
+    },
+    "type": "dropdown"
+  },
+  "sud_diag": {
+    "map": {
+      "1": "Alcohol",
+      "2": "Opioids",
+      "3": "Stimulants",
+      "4": "Tobacco"
+    },
+    "type": "checkbox"
+  },
+  "bel_pop_2": {
+    "map": {
+      "1": "Veteran",
+      "2": "Recently incarcerated",
+      "3": "Primary caregiver",
+      "4": "Pregnant",
+      "5": "Post-partum",
+      "6": "Currently using Medications for Opioid Use Disorder (MOUD)",
+      "7": "History of felony convictions",
+      "0": "None",
+      "-1": "Refused",
+      "-2": "Not Applicable",
+      "-3": "Don't Know"
+    },
+    "type": "checkbox"
+  },
+  "gender_2": {
+    "map": {
+      "1": "Male",
+      "2": "Female",
+      "3": "Transgender (Male to Female)",
+      "4": "Transgender (Female to Male)",
+      "5": "Gender Non-Conforming",
+      "50": "Other",
+      "-1": "REFUSED"
+    },
+    "type": "radio"
+  },
+  "race_2": {
+    "map": {
+      "1": "Black/African American",
+      "2": "White",
+      "3": "American Indian",
+      "4": "Alaska Native",
+      "5": "Asian Indian",
+      "6": "Chinese",
+      "7": "Filipino",
+      "8": "Japanese",
+      "9": "Korean",
+      "10": "Vietnamese",
+      "11": "Other Asian",
+      "12": "Native Hawaiian",
+      "13": "Guamanian/Chamorro",
+      "14": "Samoan",
+      "15": "Other Pacific Islander",
+      "50": "Other",
+      "-1": "Refused"
+    },
+    "type": "checkbox"
+  },
+  "eth_2": {
+    "map": {
+      "1": "Central American",
+      "2": "Cuban",
+      "3": "Dominican",
+      "4": "Mexican",
+      "5": "Puerto Rican",
+      "6": "South American",
+      "50": "Other",
+      "-1": "Refused"
+    },
+    "type": "checkbox"
+  }
+}
