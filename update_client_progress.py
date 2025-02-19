@@ -29,7 +29,11 @@ fields = ['idate', 'name', 'phone', 'coord', 'dob', 'addr', 'disch_st', 'cty', '
           'bneeds_v', 'sl_v', 'sobliv_b', 'sobliv_b_mo1_np', 'sobliv_b_mo2_np', 'sobliv_b_mo3_np', 'sobliv_b_mo4_np',
           'sobliv_b_mo5_np', 'sobliv_b_mo1_p', 'sobliv_b_mo2_p', 'sobliv_b_mo3_p', 'sobliv_b_mo4_p', 'sobliv_b_mo5_p',
           'trans_b', 'trans_v', 'trans_t', 'employ_b', 'employ_v', 'employ_t', 'idate_gpra',
-          'sobliv_sp', 'trans_sp', 'employ_b_3', 'bneeds_sp', 'ctfoup']
+          'sobliv_sp', 'trans_sp', 'employ_b_3', 'bneeds_sp', 'ctfoup', 'gpra_complete', 'cty']
+
+services_received = ['bneeds_sp', 'sobliv_sp', 'trans_sp', 'employ_b_3']
+                                            #  , 'sobliv_sp_mo1','sobliv_sp_mo2', 'sobliv_sp_mo3',
+                                            # 'sobliv_sp_mo4', 'sobliv_sp_mo5']
 
 events = ['intake_arm_1', "discharge_arm_1", "3month_postdischar_arm_1", "12month_postintake_arm_1"]
 data = project.export_records(format_type="df", fields=fields, raw_or_label="raw", events=events)\
@@ -69,7 +73,7 @@ columns = ['dcoord', 'dname', 'comp_status', 'first_idate', 'disch_idate', 'mo3p
            bel_pop_2_cols + race_2_cols + eth_2_cols + sud_cols + sobliv_cols + \
           ['bneeds_b_2', 'bneeds_v_2', 'sobliv_b_2', 'sl_v_2', 'trans_b_2', 'trans_v_2', 'trans_t_2',
            'employ_b_2', 'employ_v_2', 'employ_t_2', 'age_2', 'mo_last_cont',
-           'comp_int', 'comp_dis', 'comp_3mo', 'comp_12mo', 'terminated']
+           'comp_int', 'comp_dis', 'comp_3mo', 'comp_12mo', 'terminated', 'ncomp']
 
 index = pd.MultiIndex.from_product([ids, [out_event]], names=['cid', 'redcap_event_name'])
 new = pd.DataFrame(columns=columns, index=index)
@@ -80,6 +84,7 @@ new[sud_cols] = new[sud_cols].fillna(0).astype("int64")
 new['sobliv_b_2'] = np.zeros(len(new), dtype=int)
 new['age_2'] = np.zeros(len(new), dtype=int)
 new['terminated'] = np.zeros(len(new), dtype=int)
+new['cty_2'] = np.zeros(len(new), dtype=int)
 
 data[bel_pop_cols] = data[bel_pop_cols].fillna(0).astype("int64")
 data[race_cols] = data[race_cols].fillna(0).astype("int64")
@@ -92,6 +97,7 @@ data["trans_b"] = data["trans_b"].fillna(0).astype("int64")
 data["employ_b"] = data["employ_b"].fillna(0).astype("int64")
 data["gender"] = data["gender"].fillna(-1).astype("int64")
 data["age"] = data["age"].fillna(-1).astype("int64")
+data["cty"] = data["cty"].fillna(-1).astype("int64")
 
 for uid in ids:
     # Exclude clients with no valid intake data
@@ -119,16 +125,11 @@ for uid in ids:
     new.loc[(uid, out_event), race_2_cols] = client.loc[events[0], race_cols]
     new.loc[(uid, out_event), eth_2_cols] = client.loc[events[0], eth_cols]
 
-
+    # Criteria for considering an interview incomplete
     event_filters = {"intake_arm_1": {},
-                     "discharge_arm_1": {"disch_st": {"operation": 'eq', 'value': 2}},
-                     "3mo_post_dis": {"ctfoup": {"operation": "neq", "value": 0}},
-                     '12mo_post_int': {"ctfoup": {"operation": "neq", "value": 0}}}
-
-    event_values = {"intake_arm_1": ['idate'],
-                    "discharge_arm_1": ['idate'],
-                    "3mo_post_disch_arm_1": ['idate'],
-                    "12mo_post_int_arm_1": ['idate']}
+                     "discharge_arm_1": {"gpra_complete": {"operation": "neq", "value": 2}},
+                     "3month_postdischar_arm_1": {"gpra_complete": {"operation": "neq", "value": 2}},
+                     '12month_postintake_arm_1': {"gpra_complete": {"operation": "neq", "value": 2}}}
 
     int_comps = []
     int_dates = []
@@ -136,13 +137,16 @@ for uid in ids:
     last_idate = ""
     last_event = ""
     for i in range(len(events))[::-1]:
-        comp, tdate = ee(client, events[i])
-        int_comps.append(comp)
-        int_dates.append(tdate)
-        if comp and comp_stat == 0:
-            comp_stat = 4 - i
-            last_idate = tdate
-            last_event = events[i]
+        comp, tdate = ee(client, events[i], filter_vals=event_filters[events[i]])
+        int_comps = [comp] + int_comps
+        if comp:
+            int_dates = [tdate.strftime(date_format)] + int_dates
+            if comp_stat == 0:
+                comp_stat = i + 1
+                last_idate = tdate
+                last_event = events[i]
+        else:
+            int_dates = [tdate] + int_dates
 
     # Not key component: estimates deadline for next interview, the number of days until that date, and whether
     # incentive dispersal cards need to be mailed and/or filled out
@@ -156,7 +160,6 @@ for uid in ids:
     elif comp_stat == 3:
         dnext = intake_dt + rdelt(months=12)
         ndnext = (dnext - dt.today()).days
-        comp_stat = 3
         if inv_data.loc[uid, "cload3mo"] == "" or type(inv_data.loc[uid, "cload3mo"]) == float:
             needload = 1
     elif comp_stat == 2:
@@ -178,11 +181,20 @@ for uid in ids:
 
     # Termination status
     terminated = 0
-    if events[1] in client.index:
-        if client['disch_st'][events[1]] == 2:     # Coordinator marked discharge status as "Terminated"
-            if comp_stat < 3:                       # If later interviews are completed, ignore disch_st
-                terminated = 1
-                comp_stat = 10
+    if "discharge_arm_1" in client.index:
+        tot = 0
+        for service in services_received:
+            if client[service]['discharge_arm_1'] != "":
+                tot += int(client[service]['discharge_arm_1'])
+        if tot == 0:
+            terminated = 1
+            comp_stat = 10
+    # terminated = 0
+    # if events[1] in client.index:
+    #     if client['disch_st'][events[1]] == 2 and client['gpra_complete'][events[1]] == 0:     # Coordinator marked discharge status as "Terminated"
+    #         if comp_stat < 3:                       # If later interviews are completed, ignore disch_st
+    #             terminated = 1
+    #             comp_stat = 10
 
     # Determine the number of days since last contact, including monthly check-ins
     ndlast = (dt.today() - last_idate).days
@@ -220,11 +232,12 @@ for uid in ids:
     new.loc[(uid, out_event), 'last_idate'] = dt.strftime(last_idate, date_format)
     new.loc[(uid, out_event), 'serv_reg'] = serv_reg                                # Program Completion
     new.loc[(uid, out_event), 'mo_last_cont'] = mslc                                # Program Completion
+    new.loc[(uid, out_event), 'ncomp'] = sum(int_comps)  # Program Completion
 
-    new.loc[(uid, out_event), 'first_idate'] = int_dates[0].strftime(date_format)  # Program Completion
-    new.loc[(uid, out_event), 'disch_idate'] = int_dates[1].strftime(date_format)  # Program Completion
-    new.loc[(uid, out_event), 'mo3post'] = int_dates[2].strftime(date_format)  # Program Completion
-    new.loc[(uid, out_event), 'yrcomp'] = int_dates[3].strftime(date_format)  # Program Completion
+    new.loc[(uid, out_event), 'first_idate'] = int_dates[0]  # Program Completion
+    new.loc[(uid, out_event), 'disch_idate'] = int_dates[1]  # Program Completion
+    new.loc[(uid, out_event), 'mo3post'] = int_dates[2]  # Program Completion
+    new.loc[(uid, out_event), 'yrcomp'] = int_dates[3]  # Program Completion
 
     # Interviews completed
     new.loc[(uid, out_event), 'comp_int'] = int_comps[0]  # Program Completion
@@ -251,6 +264,7 @@ for uid in ids:
 
     # Copy values to corresponding instruments for convenience when viewing in REDCap
     new.loc[(uid, out_event), 'first_idate'] = intake                               # Program Completion
+    new.loc[(uid, out_event), 'cty_2'] = client['cty'][last_event]                  # Program Completion
     new.loc[(uid, out_event), 'dphone'] = client['phone'][last_event]               # Inventory Management
     new.loc[(uid, out_event), 'addr2'] = client['addr'][last_event]                 # Inventory Management
 
@@ -272,5 +286,5 @@ for uid in ids:
     new.loc[(uid, out_event), 'dcoord'] = client['coord']['intake_arm_1']           # Program Completion
     new.loc[(uid, out_event), 'rname'] = client['name']['intake_arm_1']             # Inventory Management
 
-new.to_csv("updated.csv")
-# project.import_records(to_import=new.reset_index(), import_format="df", date_format="YMD")
+new.to_csv(f"updated_{dt.strftime(dt.now(), format='%m%d%Y%H%M')}.csv")
+project.import_records(to_import=new.reset_index(), import_format="df", date_format="YMD")

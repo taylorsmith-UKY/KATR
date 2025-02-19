@@ -77,16 +77,30 @@ def build_checkbox_cols(base_name, all_cols):
 def evaluate_event(client: pd.DataFrame, event: str, filter_vals: dict, date_format: str="%Y-%m-%d"):
     if event in client.index and (str(client['idate'][event]) != "" and
                                   str(client['idate'][event]) != "nan"):
+        # if event != "discharge_arm_1":
         for key, value in filter_vals.items():
             if 'operation' in value.keys():
                 if value['operation'] == 'eq':
-                    if client[key][event] == value['value']:
+                    if str(client[key][event]) == str(value['value']):
                         return 0, ""
-                elif 'operation' in value.keys():
-                    if client[key][event] != value['value']:
+                elif value['operation'] == 'neq':
+                    if str(client[key][event]) != str(value['value']):
                         return 0, ""
                 else:
                     raise ValueError("Incorrect value provided for \"operation\". "
                                      "Currently, the only options are \"eq\" \"neq\"")
         return 1, dt.strptime(client['idate'][event], date_format)
+        #
+        # else:           # Manually process discharge because the logic is more complicated.
+        #     if int(client['gpra_complete'][event]) == 2:
+        #         return 1, dt.strptime(client['idate'][event], date_format)
+        #     else:
+        #         return 0, ""
+
+            # services_received = ['bneeds_sp', 'sobliv_sp', 'trans_sp', 'employ_b_3']
+            # if np.all([client[x][event] == "" for x in services_received]):
+            #     return 0, ""
+            # else:
+            #     return 1, dt.strptime(client['idate'][event], date_format)
+
     return 0, ""
