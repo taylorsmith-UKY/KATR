@@ -2,11 +2,11 @@ from datetime import datetime as dt
 import pandas as pd
 import numpy as np
 from dateutil.relativedelta import relativedelta as rdelt
-
+import re
 
 # Get current time since dates (tsd) in days and in months, with or without grace period
-def get_tsd(dates: pd.Series, grace_period: int = 7):
-    today = dt.today()
+def get_tsd(dates: pd.Series, grace_period: int = 7, today=dt.today()):
+    # today = dt.today()
     if dates.dtype == 'O':
         dates = dates.astype("datetime64[ns]")
     dsd = (today - dates).dt.days
@@ -104,3 +104,49 @@ def evaluate_event(client: pd.DataFrame, event: str, filter_vals: dict, date_for
             #     return 1, dt.strptime(client['idate'][event], date_format)
 
     return 0, ""
+
+
+def parse_logic(data, logic, event, index=None):
+    logic = logic.replace(" ", "")
+    logic = logic.replace("'", "")
+    if index is None:
+        return parse_logic(data, logic, event, np.zeros(len(data)))
+    if " or " in logic:
+        for component in logic.split(" or "):
+            idx = np.logical_and(index, parse_logic(data, component, event, index))
+        return idx
+    if " and " in logic:
+        components = logic.split(" and ")
+        tidx = parse_logic(data, components[0], event, index)
+        for component in components[1:]:
+            tidx = np.logical_and(index, parse_logic(data, component, event, index))
+        return tidx
+    r = re.search("[=<>]{1,2}", logic)
+    op = r.group(0)
+    field = logic[1:r.start()-1]
+    value = logic[r.end()+1:]
+    if field == "event-name":
+        if op == "=":
+            return data.index.get_level_values[1] == event
+        elif op == "<>":
+            return data.index.get_level_values[1] != event
+    if "][" in field:
+        event, field = field[1:-1].split("][")
+    if "(" in field:
+        field, val = field.split("(")
+        field = f"{field}___{val[:-1]}"
+    if op == "=":
+        return data[field].astype(str) == value
+    elif op == "<>":
+        return data[field].astype(str) != value
+    elif op == ">":
+        return data[field].astype(str) > value
+    elif op == "<":
+        return data[field].astype(str) < value
+    elif op == ">=":
+        return data[field].astype(str) >= value
+    elif op == "<=":
+        return data[field].astype(str) <= value
+    else:
+        raise SyntaxError(f"Input Logic: {logic}\nInvalid operation \'{op}\'")
+
