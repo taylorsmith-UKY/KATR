@@ -107,46 +107,78 @@ def evaluate_event(client: pd.DataFrame, event: str, filter_vals: dict, date_for
 
 
 def parse_logic(data, logic, event, index=None):
+    logic = logic.replace(" or ", "OR")
+    logic = logic.replace(" and ", "AND")
     logic = logic.replace(" ", "")
     logic = logic.replace("'", "")
+    logic = logic.replace("!=", "<>")
     if index is None:
         return parse_logic(data, logic, event, np.zeros(len(data)))
-    if " or " in logic:
-        for component in logic.split(" or "):
-            idx = np.logical_and(index, parse_logic(data, component, event, index))
-        return idx
-    if " and " in logic:
-        components = logic.split(" and ")
-        tidx = parse_logic(data, components[0], event, index)
+    if "OR" in logic:
+        for component in logic.split("OR"):
+            if component[0] == "(":
+                component = component[1:]
+            if component[-1] == ")":
+                component = component[:-1]
+            index = np.logical_or(index, parse_logic(data, component, event, index))
+        return index
+    if "AND" in logic:
+        components = logic.split("AND")
+        index = parse_logic(data, components[0][1:], event, index)
         for component in components[1:]:
-            tidx = np.logical_and(index, parse_logic(data, component, event, index))
-        return tidx
+            if component[-1] == ")":
+                component = component[:-1]
+            index = np.logical_and(index, parse_logic(data, component, event, index))
+        return index
     r = re.search("[=<>]{1,2}", logic)
     op = r.group(0)
-    field = logic[1:r.start()-1]
-    value = logic[r.end()+1:]
-    if field == "event-name":
-        if op == "=":
-            return data.index.get_level_values[1] == event
-        elif op == "<>":
-            return data.index.get_level_values[1] != event
+    field = logic[:r.start()]
+    value = logic[r.end():]
+    if field[0] == "(":
+        field = field[1:]
+    if field[-1] == ")":
+        field = field[:-1]
     if "][" in field:
         event, field = field[1:-1].split("][")
+    if field[0] == "[":
+        field = field[1:]
+    if field[-1] == "]":
+        field = field[:-1]
     if "(" in field:
         field, val = field.split("(")
         field = f"{field}___{val[:-1]}"
+
+    field = field.replace("[", "")
+    field = field.replace("]", "")
+    value = value.replace("[", "")
+    value = value.replace("]", "")
+    field = field.replace("(", "")
+    field = field.replace(")", "")
+    value = value.replace("(", "")
+    value = value.replace(")", "")
+    if field == "event-name":
+        if op == "=":
+            return data.index.get_level_values(1) == value
+        elif op == "<>":
+            return data.index.get_level_values(1) != value
     if op == "=":
-        return data[field].astype(str) == value
+        try:
+            return pd.to_numeric(data[field]) == pd.to_numeric(value)
+        except:
+            return data[field].astype(str) == value
     elif op == "<>":
-        return data[field].astype(str) != value
+        try:
+            return pd.to_numeric(data[field]) != pd.to_numeric(value)
+        except:
+            return data[field].astype(str) != value
     elif op == ">":
-        return data[field].astype(str) > value
+        return pd.to_numeric(data[field], errors="coerce") > pd.to_numeric(value)
     elif op == "<":
-        return data[field].astype(str) < value
+        return pd.to_numeric(data[field], errors="coerce") < pd.to_numeric(value)
     elif op == ">=":
-        return data[field].astype(str) >= value
+        return pd.to_numeric(data[field], errors="coerce") >= pd.to_numeric(value)
     elif op == "<=":
-        return data[field].astype(str) <= value
+        return pd.to_numeric(data[field], errors="coerce") <= pd.to_numeric(value)
     else:
         raise SyntaxError(f"Input Logic: {logic}\nInvalid operation \'{op}\'")
 
