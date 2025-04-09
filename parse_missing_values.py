@@ -37,9 +37,13 @@ for event in events:
     counts = {}
     data = project.export_records(format_type="df", raw_or_label="raw", events=[event], forms=insts)\
         .drop(['redcap_repeat_instrument', 'redcap_repeat_instance'], axis=1)
-    gc = project.export_records(format_type="df", raw_or_label="raw", events=[event],
+    cids = list(data.index.get_level_values(0).unique())
+    gc = project.export_records(format_type="df", raw_or_label="raw", events=[event], records=cids,
                                            fields=['gpra_complete']).drop(['redcap_repeat_instrument',
                                                                            'redcap_repeat_instance'], axis=1)
+    # tdata = project.export_records(format_type="df", raw_or_label="raw",
+    #                                events=["reporting_arm_1"], fields=['terminated'], records=cids)\
+    #     .drop(['redcap_repeat_instrument', 'redcap_repeat_instance'], axis=1)
     data['gpra_complete'] = gc['gpra_complete']
     data = data.fillna("")
     all_fields = data.columns
@@ -162,14 +166,14 @@ data_out.to_csv(f"missing_not_hidden_{dt.strftime(dt.today(), '%Y%m%d')}.csv")
 
 # sub = pd.read_csv(f"missing_counts{dt.strftime(dt.today(), '%Y%m%d')}.csv")
 
+doindex = pd.MultiIndex.from_arrays([data_out['field'], data_out['event']])
 idx = np.logical_and((data_ct['missing'] > 0).to_numpy(), (data_ct['missing'] < 31).to_numpy())
 data = data_ct[idx]
-dindex = pd.MultiIndex.from_arrays([data_out['field'], data_out['event']])
-didx = [x in data_ct.index for x in dindex]
+didx = np.array([x in data.index for x in doindex])
 data_out[didx].to_csv(f"missing_not_hidden_{dt.strftime(dt.today(), '%Y%m%d')}_sub.csv", index=False)
 
-sub = pd.read_csv("missing_counts20250401_sub.csv")
-sub.index = pd.MultiIndex.from_arrays([sub['field'], sub['event']])
-dindex = pd.MultiIndex.from_arrays([data_out['field'], data_out['event']])
-didx = [x in sub.index for x in dindex]
-data_out[didx].to_csv(f"missing_not_hidden_{dt.strftime(dt.today(), '%Y%m%d')}_sub.csv", index=False)
+# sub = pd.read_csv("missing_counts20250401_sub.csv")
+# sub.index = pd.MultiIndex.from_arrays([sub['field'], sub['event']])
+# dindex = pd.MultiIndex.from_arrays([data_out['field'], data_out['event']])
+# didx = [x in sub.index for x in dindex]
+# data_out[didx].to_csv(f"missing_not_hidden_{dt.strftime(dt.today(), '%Y%m%d')}_sub.csv", index=False)
