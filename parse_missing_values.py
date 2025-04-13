@@ -20,7 +20,7 @@ branch_text_rep = {"next-event-name": {events[i]: events[i+1] for i in range(3)}
 branch_text_rep["next-event-name"][events[-1]] = ""
 branch_text_rep["previous-event-name"][events[0]] = ""
 
-dic = pd.read_csv("KATRParticipantSurvey_DataDictionary_2025-04-06.csv")
+dic = pd.read_csv("KATRParticipantSurvey_DataDictionary_2025-04-10.csv")
 insts = ["record_management", "contact_information", "recovery_capital", "substance_use_history",
          "recovery_support_and_history", "overdose_history", "medicationstreatments_prescribed_for_substance_use",
          "correctional_history", "health_history", "life_domain_assessment", "mental_health_history", "demographics",
@@ -29,6 +29,10 @@ dic.index = dic['Variable / Field Name']
 # ignore_insts = ['contact_information', 'monthly_checkin', 'monthly_checkin_2', 'program_completion',
 #                 'inventory_management', 'checkin_monitoring',
 #                 'recruiting_info', 'monthly_expenditures', 'expense_records', 'gpra']
+dterm = project.export_records(format_type="df", raw_or_label="raw", events=["reporting_arm_1"], fields=['terminated'])\
+        .drop(['redcap_repeat_instrument', 'redcap_repeat_instance'], axis=1)
+dterm.index = dterm.index.get_level_values(0)
+terminated = dterm[dterm['terminated'] == 1].index
 all_missing = []
 results = {}
 for event in events:
@@ -70,8 +74,8 @@ for event in events:
         if not multi:
             data[field] = data[field].astype(str)
         # Consolidate different entries for NA
-            idx = data[field].str.match("^[n N]\/?[a A]$")
-            data.loc[idx, field] = ""   # exclude any additional NA values despite format
+        #     idx = data[field].str.match("^[n N]\/?[a A]$")
+            # data.loc[idx, field] = ""   # exclude any additional NA values despite format
         # ignore fields that are extraneous indicators of refusal
         branch = dic['Branching Logic (Show field only if...)'][field]
         if pd.isna(branch) or branch == "":
@@ -139,38 +143,29 @@ for event in events:
 
 data_ct.to_csv(f"missing_counts{dt.strftime(dt.today(), '%Y%m%d')}.csv")
 
+nterm = [x not in terminated for x in data_out['cid']]
+data_out = data_out[nterm]
 data_out.to_csv(f"missing_not_hidden_{dt.strftime(dt.today(), '%Y%m%d')}.csv")
-# data_out.to_excel(f"missing_not_hidden_{dt.strftime(dt.today(), '%Y%m%d')}.xlsx")
-    #
-    #
-    # fields = np.array(fields)
-    # counts = np.zeros(len(fields))
-    # for i, field in enumerate(fields):
-    #     if field in data.columns:
-    #         counts[i] = sum(data[field].isna())
-    #     else:
-    #         matches = [x for x in data.columns if field in x and "____" not in x]
-    #         if len(matches):
-    #             count = sum([sum(data[x].isna()) for x in matches]) / len(matches)
-    #         else:
-    #             print(f"Field {field} has no matches in database")
-    #
-    # sel = np.where(counts)
-    # fields = fields[sel]
-    # counts = counts[sel]
-    #
-    # o = np.argsort(counts)[::-1]
-    # df = pd.DataFrame(data={"fields": fields[o], "count": counts[o]})
-    #
-    # df.to_csv(f"missing_counts_{event}.csv")
 
-# sub = pd.read_csv(f"missing_counts{dt.strftime(dt.today(), '%Y%m%d')}.csv")
+# doindex = pd.MultiIndex.from_arrays([data_out['field'], data_out['event']])
+# idx = np.logical_and((data_ct['missing'] > 0).to_numpy(), (data_ct['missing'] < 31).to_numpy())
+# data = data_ct[idx]
+# data = data_ct
+# didx = np.array([x in data.index for x in doindex])
 
-doindex = pd.MultiIndex.from_arrays([data_out['field'], data_out['event']])
-idx = np.logical_and((data_ct['missing'] > 0).to_numpy(), (data_ct['missing'] < 31).to_numpy())
-data = data_ct[idx]
-didx = np.array([x in data.index for x in doindex])
+ignored_fields = ["wits_cid", "dterm_te_oth", "unavail", "emrel2", "emcell2", "emem2", "emname2", "emph2",
+                  "emem1", "emph1", "cple", "email", "sobliv_b_mo2_np", "sobliv_b_mo3_np", "sobliv_b_mo4_np",
+                  "sobliv_b_mo5_np", "sobliv_b_mo1_np", "phone", "scr_cooc", "term_exp",
+                  "emname1", "emcell1", "emrel1", "plnserv", "dplnserv"]
+
+ignored_cids = ['RNKCSR41', 'RLVLBT21']
+
+didx = [x not in ignored_fields for x in data_out['field']]
+cidx = [x not in ignored_cids for x in data_out['cid']]
+didx = np.logical_and(didx, cidx)
 data_out[didx].to_csv(f"missing_not_hidden_{dt.strftime(dt.today(), '%Y%m%d')}_sub.csv", index=False)
+
+
 
 # sub = pd.read_csv("missing_counts20250401_sub.csv")
 # sub.index = pd.MultiIndex.from_arrays([sub['field'], sub['event']])
