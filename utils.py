@@ -114,6 +114,26 @@ def parse_logic(data, logic, event, index=None):
     logic = logic.replace("!=", "<>")
     if index is None:
         return parse_logic(data, logic, event, np.zeros(len(data)))
+    if logic[0] == "(":
+        ct = 0
+        for i in range(len(logic)):
+            if logic[i] == "(":
+                ct += 1
+            elif logic[i] == ")":
+                ct -= 1
+            if ct == 0:
+                break
+        if i != len(logic):
+            first = logic[1:i]
+            index = parse_logic(data, first, index)
+            if logic[i+1:i+3] == "OR":
+                after = logic[i+3:]
+                return np.logical_or(index, parse_logic(data, after, event, index=index))
+            elif logic[i+1:i+4] == "AND":
+                after = logic[i+4:]
+                return np.logical_and(index, parse_logic(data, after, event, index=index))
+        else:
+            logic = logic[1:-1]
     if "OR" in logic:
         for component in logic.split("OR"):
             if component[0] == "(":
