@@ -14,6 +14,8 @@ with open("api_key.txt", "r") as f:
 project = Project(api_url, api_key)
 date_format = "%Y-%m-%d"
 
+exclude_term = False
+
 # Import demographic data from REDCap
 fields = ['cid', 'hisp', 'race', 'gender', 'eth']
 events = ['intake_arm_1']
@@ -21,21 +23,26 @@ data = project.export_records(format_type="df", fields=fields, raw_or_label="raw
     .drop(['redcap_repeat_instrument', 'redcap_repeat_instance'], axis=1)
 data.index = data.index.droplevel(1)
 
-# Import discharge status from Program Completion
-fields = ["comp_status"]
-events = ['reporting_arm_1']
-ddata = project.export_records(format_type="df", fields=fields, raw_or_label="raw", events=events)\
-    .drop(['redcap_repeat_instrument', 'redcap_repeat_instance'], axis=1)
-ddata.index = ddata.index.droplevel(1)
+# Import termination data
+tdata = project.export_records(format_type="df", fields=["terminated"],
+                               raw_or_label="raw", events=["reporting_arm_1"]).\
+    drop(['redcap_repeat_instrument', 'redcap_repeat_instance'], axis=1)
+tdata.index = tdata.index.droplevel(1)
 
-gender_vals = {"Female": 2, "Male": 1, "Transgender (Male to Female)": 3, "Gender Non-conforming": 5, "Unknown/Not Reported": -1}
+# Only keep clients who are not terminated
+if exclude_term:
+    keep = tdata['terminated'] != 1
+    data = data[keep]
+
+# Mapping from REDCap fields to RPPR fields
+gender_vals = {"Female": 2, "Male": 1, "Transgender (Male to Female)": 3, "Transgender (Female to Male)": 4, "Gender Non-conforming": 5, "Unknown/Not Reported": -1}
 race_vals = {'American Indian/Alaska Native': [3, 4], 'Asian': [6, 7, 8, 9, 10, 11],
              'Native Hawaiian/Pacific Islander': [12, 13], 'Black/African American': [1], 'White': [2],
              'More than One Race': [],
              'Unknown or Not Reported': ['_1', '_2', '_3']}
 
 # Hispanic
-lines = ["Ethnic Groups", "Ethnicity,Female,Male,Unknown"]
+lines = ["Ethnic Groups", "Race, Female, Male, Transgender (Male to Female), Transgender (Female to Male), Gender Non-conforming, Unknown/Not Reported"]
 data['hisp'].fillna(-1, inplace=True)
 hisp_vals = {"Hispanic": 1, "Not Hispanic": 0, "Unknown": -1}
 for hisp, val in hisp_vals.items():
@@ -50,7 +57,7 @@ race_cols = [x for x in data.columns if 'race___' in x and '____' not in x]
 data['race_cts'] = data[race_cols].sum(axis=1)
 mtor_idx = data['race_cts'] > 1
 none_idx = data['race_cts'] == 0
-lines += ["", "Races (total population)", "Race, Female, Male, Transgender (Male to Female), Gender Non-conforming, Unknown/Not Reported"]
+lines += ["", "Races (total population)", "Race, Female, Male, Transgender (Male to Female), Transgender (Female to Male), Gender Non-conforming, Unknown/Not Reported"]
 for race, vals in race_vals.items():
     if race == 'More than One Race':
         idx = data["race_cts"] > 1
@@ -69,7 +76,7 @@ for race, vals in race_vals.items():
     # print(s)
 
 
-lines += ["", "Races (hispanic population)", "Race, Female, Male, Transgender (Male to Female), Gender Non-conforming, Unknown/Not Reported"]
+lines += ["", "Races (hispanic population)", "Race, Female, Male, Transgender (Male to Female), Transgender (Female to Male), Gender Non-conforming, Unknown/Not Reported"]
 hdata = data[data["hisp"] == 1]
 mtor_idx = hdata['race_cts'] > 1
 for race, vals in race_vals.items():
